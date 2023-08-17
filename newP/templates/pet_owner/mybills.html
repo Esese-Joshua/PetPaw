@@ -1,0 +1,55 @@
+{% extends "pet_owner/login_layout.html" %}
+
+
+{% block content %}
+
+      {% block breadcrumbs %}
+      <ol class="breadcrumb mb-4">
+          <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+          <li class="breadcrumb-item"><a href="/payment">Make Payment</a></li>
+          <li class="breadcrumb-item active">My Bills </li>
+      </ol>
+      {% endblock breadcrumbs %}
+
+         {% block admincontent %}
+         <div class="card mb-4">
+             <div class="card-header">
+    The DataTable below shows all neccessary info concerning your bills and payments. Enjoy!
+            <a href="/payment" class="btn btn-outline-primary">Make Payment</a>
+             </div>
+         </div>
+         <div class="card mb-4 container">
+            
+             <div class="card-body">
+                <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">S/N</th>
+      <th scope="col">Full Name</th>
+      <th scope="col">Amount</th>
+      <th scope="col">Payment Status</th>
+      <th scope="col">Date</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    {% for x in payments %}
+    <tr>
+      <th scope="row"> {{ loop.index}} </th>
+      <td> {{ x.user_id }} </td>
+      <td> {{ x.fullname }} </td>
+      <td> {{ x.amount }} </td>
+      <td> {{ x.pay_date }} </td>
+      <td> {{ x.pay_status }} </td>
+      
+    </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+                            </div>
+                        </div>
+
+    {% endblock admincontent %}
+
+{%endblock%}

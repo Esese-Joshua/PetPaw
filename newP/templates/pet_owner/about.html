@@ -1,0 +1,101 @@
+{% if user_loggedin %}	
+	{% extends 'pet_owner/logout_layout.html' %}
+{% else %}
+	{% extends "pet_owner/login_layout.html" %}
+{% endif %}
+
+{% block content%}
+
+<!-- why petPaw -->
+<div class="row" style="margin-top: 3%; ">
+	<div class="col-md-2"> </div>
+
+	<div class="col-md-8">
+
+		<h1> About Our Pet Care Services </h1>
+
+			 <p> Leading the Way in Dog Boarding, Day Care, & More
+				It’s important to get to know your pup care provider, as you are trusting us with a furry member of your family. With Camp Pet Paw®, you can rest assured your dog is in the best, most qualified hands in the business. Since 2020, we have been providing fun and dependable dog care services parents and pups love. 
+			</p>
+
+			<p> Pet Paw is dedicated to providing the best quality care for your pet. We offer daily visits for your pet, which may include dog walking, feedings, play times, medical care, or just good company, depending on your needs. We strive to be the most dependable and accessible service in the city of Chicago and will go the extra distance to give you exactly what you’re looking for in pet care. </p>
+
+			<h1> The Story of Pet Paw </h1>
+			  <p> The idea for a new kind of dog boarding experience was initially hatched in 2020 when our founder, Esese Joshua, found it difficult to get quality care for his two dogs. He was amazed at how owners were forced to leave their animals in uncomfortable conditions for long periods of time with few alternatives. Fast forward 3 years, Joshua opens the very first location in 2023 in Abuja, Nigeria. Within 3 years, the demand for hotel-quality dog day care is so strong that more locations begin to open across Nigeria. Just a few months after that, locations are popping up everywhere across Nigeria 
+			  <a href="/fullstory"> <span style="color: rosybrown;"> Read more... </span> </a> </p>
+	</div>
+
+	<div class="col-md-2"> </div>
+
+</div>
+
+<div class="row" style="margin-top:3%"> 
+	<div class="col-md-1"> </div>
+		<div class="col-md-10"> 
+
+<!-- CARDS -->
+
+<div class="card-group">
+<div class="card">
+	 <img src="static/images/12.jpg" class="card-img-top cards-images" alt="...">
+	   <div class="card-body">
+
+		  <h5 class="card-title">Card title</h5>
+			  <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is 		a little bit longer.</p>
+
+		</div>
+
+		<div class="card-footer">
+			  <small class="text-body-secondary">Last updated 3 mins ago</small>
+		</div>
+</div>
+
+	  <div class="card">
+		   <img src="static/images/9.jpg" class="card-img-top cards-images" alt="...">
+				<div class="card-body">
+				  <h5 class="card-title">Card title</h5>
+					  <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
+			</div>
+
+				<div class="card-footer">
+				  <small class="text-body-secondary">Last updated 3 mins ago</small>
+				</div>
+	  </div>
+
+				  <div class="card">
+					  <img src="static/images/13.jpg" class="card-img-top cards-images" alt="...">
+						<div class="card-body">
+						  <h5 class="card-title">Card title</h5>
+						  <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
+						</div>
+
+					<div class="card-footer">
+		  <small class="text-body-secondary">Last updated 3 mins ago</small>
+		</div>
+	  </div>
+
+	</div>
+
+			
+
+
+
+
+
+		 </div>
+
+
+
+
+				 <div class="col-md-1"> </div>
+
+</div>
+
+<!-- static pic function -->
+<div class="row">
+	<div class="col background-pic-2">
+		</div>
+ </div>
+
+
+{% endblock %}

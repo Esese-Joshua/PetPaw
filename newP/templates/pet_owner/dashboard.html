@@ -1,0 +1,77 @@
+{% extends ('pet_owner/login_layout.html') %}
+
+{% block content %}
+
+		{% set messages = get_flashed_messages() %}
+		{% for t in messages %}
+		<p class="alert alert-info"> {{ t }} </p>
+		{% endfor %}
+
+		{% set messages = get_flashed_messages() %}
+		{% for b in messages %}
+		<p class="alert alert-info"> {{ b }} </p>
+		{% endfor %}
+	
+		<div class="row" style="margin-top: 3%">
+			<div class="col-md-1"> </div>
+				
+				<div class="col-md-2 d-grid gap-2">
+
+					<button type="button" class="btn btn-outline-dark"> <a href="/allpets"> PET PROFILES </a> </button>
+					
+					<button type="button" class="btn btn-outline-dark"> <a href="/medics"> MEDICAL RECORDS </a> </button>
+
+					<button type="button" class="btn btn-outline-dark"> <a href="/payment"> MY BILLS </a> </button>
+
+					<button type="button" class="btn btn-outline-dark"> <a href="/profile"> USER PROFILE </a> </button>
+
+				</div>
+		
+				<div class="col-md-8"> 
+					<h1> What Are We? </h1>
+						<p> Pet Paw is dedicated to providing the best quality care for your pet. We offer daily visits for your pet, which may include dog walking, feedings, play times, or just good company, depending on your needs. We strive to be the most dependable and accessible service in the city of Abuja and will go the extra distance to give you exactly what you’re looking for in pet care.</p>
+					<br>
+
+					<h1> Why Choose Our Dog Care Services? </h1>
+					
+					<h4> Delivering the Pet Paw Difference </h4>
+						<p> There are many things to consider when choosing a company that will take care of your dog and all their needs. Trust is a critical factor that should be at the top of every pet parent’s mind. At Pet Paw®, you can rest assured that when your dog is with us, they are in safe and loving hands. Providing peace of mind for those times you can’t be with your pup is our number-one priority.
+
+			   <br><br>
+
+					   <h4> What Sets Our Dog Boarding Near You Apart from the Rest </h4>
+						   <p> Your dog deserves the best – they deserve the premier, all-inclusive services of Pet Paw. Here, your pup can romp and play all day long, socializing with other dogs and humans. We even offer dog and puppy grooming! It’s no wonder pups pull their parents to our front door every time they come to Camp! </p>
+				
+				</div>
+		</div>
+
+		<!-- static pic function -->
+			<div class="row">
+				<div class="col background-pic">
+					</div>
+			 </div>
+
+
+		<!-- tetiarry navigators -->
+			<div class="row"> 
+					<div class="col tettiary-nav">
+						<ul style="display: flex;"> 
+							  <li> <a href ="https://www.madpaws.com.au/" target="blank"> Get a pet sitter today.. </a> </li>
+
+								<li> <a href ="vet.html">  Contact A Vet Today </a> </li>
+								
+									<li> <a href ="reports.html"> Reports & Analytics </a> </li>
+						</ul>
+					</div>
+
+			</div>
+
+
+
+ <script src="jquery.js"></script>
+
+</body>
+</html>
+
+{%endblock%}
+

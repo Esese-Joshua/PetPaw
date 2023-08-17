@@ -1,0 +1,27 @@
+{% extends "pet_owner/login_layout.html" %}
+
+
+{% block content %}
+    
+<div class="content" style="padding:3em">
+  <h3 class="card-header"> This is the payment page </h3>
+
+
+  <form action="/paystack" method="post" style="margin-top: 2%;">
+    <p> Please confirm the amount you are paying and your email address:</p>
+    
+    <label for="amount" class="form-label"> Amount </label>
+    <input type="number" class="form-control"> 
+
+    <label for="mail" class="form-label"> Email </label>
+    <input type="mail" class="form-control"> 
+    
+    <br>
+    <button class="btn btn-primary"> Make Payment </button>
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    </form>
+
+</div>
+
+{% endblock %}

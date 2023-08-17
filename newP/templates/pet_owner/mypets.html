@@ -1,0 +1,69 @@
+{% if user_loggedin %}	
+	{% extends 'pet_owner/logout_layout.html' %}
+{% else %}
+	{% extends "pet_owner/login_layout.html" %}
+{% endif %}
+
+{% block content %}
+
+      <!-- {% block breadcrumbs %}
+      <ol class="breadcrumb mb-4">
+          <li class="breadcrumb-item"><a href="/user/dashboard">Dashboard</a></li>
+          <li class="breadcrumb-item active">All Pets</li>
+      </ol>
+      {% endblock breadcrumbs %} -->
+
+         {% block admincontent %}
+
+         {% set messages= get_flashed_messages() %}
+         {% for m in messages %}
+         <p class="alert alert-success"> {{ m }} </p>
+         {% endfor %}
+
+
+         <div class="card mb-4" style="margin-top: 2%;">
+             <div class="card-header">
+  The DataTable below shows all registered pets in our platform. Enjoy!
+  <a href="/addpet" class="btn btn-outline-primary">Add Pet</a>
+             </div>
+         </div>
+         <div class="card mb-4 container">
+            
+             <div class="card-body">
+                <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">S/N</th>
+      <th scope="col">Pet Name</th>
+      <th scope="col">Category</th>
+      <th scope="col">Picture</th>
+      <th scope="col">Gender</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    {% for m in pets %}
+    <tr>
+      <th scope="row"> {{ loop.index}} </th>
+      <td> {{ m.pet_name }} </td>
+      <td> {{ m.catrelate.cat_name }} </td>
+      
+      <td><img src="{{url_for('static',filename='/collections/'+m.pet_pic) }}" height="100"></td>
+
+      <td>       
+          <a href="" class="btn btn-sm btn-success disabled"> {{m.pet_gender}}</a>
+          <a href="" class="btn btn-sm btn-primary">Edit</a> 
+          <a href="/deletepet/{{ m.pet_id }}" onclick="return confirm('Are you sure you want to delete {{ m.pet_name }}?')" class="btn btn-sm btn-danger">Delete</a> 
+          
+        </td>
+    </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+                            </div>
+                        </div>
+
+    {% endblock admincontent %}
+
+{%endblock%}

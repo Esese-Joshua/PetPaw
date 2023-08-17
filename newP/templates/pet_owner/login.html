@@ -1,0 +1,73 @@
+{% extends ('pet_owner/logout_layout.html') %}
+
+{% block content %}
+
+      <!-- login -->
+        <div style="margin-top: 3%;" class="row">
+
+          <h3>Login Form </h3>
+
+            <div class="col card-body" style="margin-top: 3%"> 
+           
+            <form method="post">       
+                            
+                {% if loginform.email.errors %}
+                <p class="alert alert-danger"> {{ loginform.email.errors }} </p>
+                {% endif %}
+              
+                {% if loginform.password.errors %}
+                <p class="alert alert-danger"> {{ loginform.password.errors }} </p>
+                {% endif %}
+
+                {% set messages= get_flashed_messages() %}
+                {% for m in messages %}
+                <p class="alert alert-success"> {{ m }} </p>
+                {% endfor %}
+            
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                      
+                <div class="form-floating mb-3">
+                  
+                  {{ loginform.email(class_="form-control") }}
+                  {{ loginform.email.label }}
+
+                 </div>
+                <div class="row mb-3">
+
+                  <div> 
+                  {{ loginform.password(class_="form-control", placeholder="Enter password") }}
+                </div>
+
+                </div>
+
+                <div class="mt-4 mb-0">
+
+                {{ loginform.btn(class_="btn btn-lg btn-primary") }}
+                {{ loginform.csrf_token }}
+
+              </div>
+                </div>
+
+    </form>
+
+          <div class="small"><a href="/signup">Don't have an account? Join us now! </a></div>
+
+          </div>
+
+
+        </div>
+
+          <!-- static pic function -->
+          <div class="row">
+              <div class="col background-pic-2"></div>            
+          </div>
+
+{%endblock%}
+
+
+
+
+
+   
+    

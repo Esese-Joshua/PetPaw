@@ -1,0 +1,102 @@
+{% if user_loggedin %}	
+	{% extends 'pet_owner/login_layout.html' %}
+{% else %}
+	{% extends "pet_owner/logout_layout.html" %}
+{% endif %}
+
+{% block content %}
+
+{% block breadcrumbs %}
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/dashboard"> Dashboard </a></li>
+          <li class="breadcrumb-item active">Add Pet</li>
+      </ol>
+{% endblock breadcrumbs %}
+
+{% block petcontent %}
+
+    {% set signup_messages= get_flashed_messages() %}
+
+    {% for b in messages %}
+    <p class="alert alert-danger"> {{ b }} </p>
+    {% endfor %}
+
+       <div class="row">
+           <div class="col">
+                              
+          <form action="" method="POST" enctype="multipart/form-data">
+          <input type="hidden"  name="csrf_token" value="{{csrf_token() }}">
+
+          <div class="mb-3">
+          <label for="Category" class="form-label">Category</label>
+          <select name="petcat" class="form-control" id="category">
+          <option> Please Select Pet Category </option>
+          
+          
+          {% for c in cat %}
+          <option value="{{ c.cat_id}}"> {{ c.cat_name }}</option>
+          {% endfor %}
+
+          </select>
+          </div>
+                                   
+
+          <div class="mb-3">
+            <label for="title" class="form-label"> Pet Name </label>
+            <input type="text" class="form-control" id="title" name="title">
+             
+          </div>
+          <div class="mb-3">
+            <label for="descript" class="form-label"> Pet Description </label>
+             <textarea class="form-control" name="descript"> </textarea>
+          </div>
+           
+          <div class="mb-3">
+            <label class="form-label" for="customFile">Upload Picture</label>
+            <input type="file" class="form-control" id="customFile" name="cover">
+          </div>
+
+          <fieldset class="mb-3">
+            <legend>Gender</legend>
+            <div class="form-check">
+              <input type="radio" name="gender" class="form-check-input" id="exampleRadio1" name="gender" value="male">
+              
+              <label class="form-check-label" for="exampleRadio1">Male</label>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="radio" name="gender" class="form-check-input" id="exampleRadio2" value="female">
+              <label class="form-check-label" for="exampleRadio2"> Female </label>
+            </div>
+          </fieldset>
+
+           <div class="mb-3">
+            <label class="form-label" for="customFile">Color</label>
+            <input type="text" class="form-control" id="title" name="color">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="customFile">Current weight</label>
+            <input type="text" class="form-control" id="weight" name="weight">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="customFile">DOB</label>
+            <input type="date" class="form-control" id="dob" name="dob">
+          </div>
+          
+         
+          <button type="submit" class="btn btn-primary">Add Pet!</button>
+        </form>
+
+
+      </div>
+        </div>
+
+        <div>
+
+        </div>
+        
+{% endblock petcontent %}
+
+
+{%endblock%}

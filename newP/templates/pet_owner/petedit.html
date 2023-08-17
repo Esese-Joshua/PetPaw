@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href ="fontawesome/css/all.css" rel ="stylesheet" type ="text/css">
+	<link href ="Bootstrap/css/bootstrap.css" rel ="stylesheet" type ="text/css">
+	<link href ="css/css.css" rel ="stylesheet" type ="text/css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+			
+
+	<title> Edit Pet Profile </title>
+</head>
+<body>
+
+	<div class="container-fliud">
+		<div class="row topBar">
+					
+	<!-- top -->
+			<div class="col-md-2">
+					 <a href ="index.html">
+						<img src ="images/2a.jpg" style ="height:80px; width:80%">
+							</a>
+			 </div>
+
+				<div class="col-md-10">
+					<nav>
+						<ul class ="horizontal-list">
+							<li> <a href="index.html"> Home </a> </li>
+								<li> <a href="about.html"> About </a> </li>
+										<li> <a href="contact.html"> Contact </a> </li>
+
+
+							<button class="navbar-toggler ms-auto" type="button" data-mdb-toggle="collapse"
+						      data-mdb-target="#navbarToggleExternalContent3" aria-controls="navbarToggleExternalContent3"
+						      aria-expanded="false" aria-label="Toggle navigation">
+						      <i class="fas fa-bars"></i>
+						    </button>
+								<div class="collapse" id="navbarToggleExternalContent4">
+								  <div class="bg-light shadow-3 p-4">
+								    <button class="btn btn-link btn-block border-bottom m-0"> Edit Profile </button>
+								    <button class="btn btn-link btn-block border-bottom m-0"> Edit Pet Profile  </button>
+								    <button class="btn btn-link btn-block m-0"> Logout </button>
+								    <button class="btn btn-link btn-block m-0"> Feeding </button>
+								  </div>
+								</div>
+
+						</ul>
+					</nav>
+				</div>
+							
+			
+				</div>
+
+	<!-- banner -->
+		<div class="row">
+				<div class="col">
+					<img src ="images/banner.jpg" style ="height:350px; width:100%">
+				</div>
+		</div>
+
+
+	<!-- why petPaw -->
+		<div class="row" style="margin-top: 3%;">
+				<div class="col-md"> 
+
+			<div id="register">
+            <form class="row g-3 justifier" enctype="multipart/form-data">
+
+        
+              
+                <label for="inputEmail4" class="form-label">Name</label>
+                <input type="email" class="form-control" id="inputEmail4">             
+              
+                <label for="inputPassword4" class="form-label">Breed</label>
+                <input type="password" class="form-control" id="inputPassword4">
+               
+                <label for="inputCity" class="form-label">Color</label>
+                <input type="text" class="form-control" id="inputCity">
+              
+                <label for="inputZip" class="form-label">Age</label>
+                <input type="text" class="form-control" id="inputZip" placeholder="YYYY-MM-DD"> 
+
+                <textarea class="form-control" id="inputZip"> Discription </textarea>
+
+
+                <label for="inputZip" class="form-label"> Kindly attach a picture </label>
+                <input type="file" name="pix">
+		        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">     
+
+               <button type="submit" class="btn btn-primary"> Update </button>
+              
+            </form>
+            </div>
+
+
+
+				</div>
+			
+			</div>
+
+		<!-- static pic function -->
+			<div class="row" style="margin-top: 5%">
+				<div class="col background-pic">
+					</div>
+			 </div>
+
+
+		<!-- tetiarry navigators -->
+			<div class="row"> 
+					<div class="col tettiary-nav">
+						<ul style="display: flex;"> 
+							  <li> <a href ="https://www.madpaws.com.au/" target="blank"> Get a pet sitter today.. </a> </li>
+
+								<li> <a href ="vet.html">  Contact A Vet Today </a> </li>
+								
+									<li> <a href ="reports.html"> Reports & Analytics </a> </li>
+						</ul>
+					</div>
+
+			</div>
+
+
+		<!-- footer -->
+					<div class="row footer">
+        <div class="col-md"> 
+            <p class="footer"> Get useful tips & unlimited access to our vet partners along with exclusive subscriber-only content directly at your finger tips. </p>
+            <button class="btn btn-outline-dark"> Contact A Vet Today </button> <br><br>
+       		 </div>    
+      		</div>
+          <p style ="text-align:center; font-size: 12px;"> &copy Designed & Built by Bobo 2023 </p>
+					
+				
+			</div>
+
+
+
+
+</body>
+</html>

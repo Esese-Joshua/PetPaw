@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href ="/static/fontawesome/css/all.css" rel ="stylesheet" type ="text/css">
+	<link href ="/static/Bootstrap/css/bootstrap.css" rel ="stylesheet" type ="text/css">
+	<link href ="/static/css/css.css" rel ="stylesheet" type ="text/css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    </head>
+
+    <body>
+        
+	<div class="container-fliud">
+		<div class="row topBar">
+					
+	<!-- top -->
+			<div class="col-md-2">
+					 <a href ="/">
+						<img src ="/static/images/2a.jpg" style ="height:80px; width:80%">
+							</a>
+			 </div>
+
+				<div class="col-md-10">
+					<nav style="margin-left: 10%;">
+					<ul class ="horizontal-list">
+						
+						<li> <a href="/"> Home </a> </li>
+						<li> <a href="/notfications"> Notfications </a> </li>
+						<li> <a href="/contactus"> Contact </a> <li>
+						<li> <a href="/profile"> Profile </a> </li>
+						<li> <a href="/"> Sign out </a> </li>
+				  
+                        
+						  {% if userdeets %}
+							  <img src="static/images/profile/{{ userdeets.user_pix }}" alt="Profile Picture" width="40" height="40" class="rounded-circle" style="margin-top: 2%;">
+						  
+						  {% else %}
+							  <img src="/static/images/16.jpg" alt="40" width="40" height="40" class="rounded-circle" style="margin-top: 2%;">
+
+						  {% endif %}
+				  							
+					</ul>
+					</nav>
+				</div>
+		</div>
+
+        <!-- banner -->
+
+        <div class="row">
+			<div class="col">
+				<img src ="/static/images/7.jpg" style ="height:350px; width:100%; background-color: grey;">
+			</div>
+		</div>
+
+            <div>
+                <nav>
+                    <div class="admin_text_color">
+                        <div class="nav">
+                            <a href="/admin/admin_dashboard">
+                            Dashboard
+                            </a>
+                            
+                            <a href="/admin/admin_dashboard">
+                                
+                                Manage pets
+                            </a>
+                       
+                            <a href="">
+                                Admin Users
+                            </a>
+
+                            <a href="tables.html">
+                                Registered Users
+                            </a>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+
+                <main>
+                    <div class="container-fluid px-4">
+
+                        
+
+                        <h1 class="mt-4">Dashboard</h1>
+                        {% block breadcrumbs %}
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item active">Dashboard</li>
+                        </ol>
+                        {% endblock breadcrumbs %}
+
+                        {% set messages = get_flashed_messages(with_categories=True) %}
+                            {% for c,m in messages %}
+                            <div class="alert alert-{{c}}"> {{ m }}</div>
+                            {% endfor %}
+
+                        {% block admincontent %}
+                        <div class="row">
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card bg-primary text-white mb-4">
+                                    <div class="card-body">Primary Card</div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card bg-warning text-white mb-4">
+                                    <div class="card-body">Warning Card</div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card bg-success text-white mb-4">
+                                    <div class="card-body">Success Card</div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card bg-danger text-white mb-4">
+                                    <div class="card-body">Danger Card</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endblock admincontent %}
+                        
+                    </div>
+                </main>
+
+                {% block content %}
+				
+                {% endblock %}
+                
+               
+                <!-- footer -->
+			<div class="row footer">
+				<div class="col-md"> 
+						<p class="footer"> Get useful tips & unlimited access to our vet partners along with exclusive subscriber-only content directly at your finger tips. </p>
+						<button class="btn btn-outline-dark"> Contact A Vet Today </button> <br><br>
+				</div>		
+			</div>
+					<p style ="text-align:center; font-size: 12px;"> &copy Designed & Built by Bobo 2023 </p>
+
+					
+<script href src="/static/jquery.min.js" type="text/javascript"> </script>
+
+
+</body>
+</html>

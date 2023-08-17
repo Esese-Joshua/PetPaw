@@ -1,0 +1,88 @@
+{% extends ('pet_owner/logout_layout.html') %}
+
+{% block content %}
+
+      <!-- signup -->
+      <div class="row" style="margin-top: 3%">
+        <h3> Sign Up Form </h3>
+        
+        <div class="col" style="margin-top: 3%"> 
+   
+            <form method="post">           
+             
+                {% if signupform.fullname.errors %}
+                <p class="alert alert-danger"> {{ signupform.fullname.errors }} </p>
+                {% endif %}
+              
+                {% if signupform.email.errors %}
+                <p class="alert alert-danger"> {{ signupform.email.errors }} </p>
+                {% endif %}
+              
+                {% if signupform.password.errors %}
+                <p class="alert alert-danger"> {{ signupform.password.errors }} </p>
+                {% endif %}
+
+                {% set signup_messages= get_flashed_messages() %}
+                {% for s in messages %}
+                <p class="alert alert-danger"> {{ s }} </p>
+                {% endfor %}
+              
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <div class="form-floating mb-3 mb-md-0">
+
+                          {{ signupform.fullname(class_="form-control", placeholder="Enter your Fullname") }}
+                          {{ signupform.fullname.label }}
+
+                </div>
+                <div class="form-floating mb-3">
+                  
+                  {{ signupform.email(class_="form-control", placeholder="name@example.com") }}
+                  {{ signupform.email.label }}
+
+                </div>
+                <div class="row mb-3">
+
+                  <div> 
+                  {{ signupform.password(class_="form-control", placeholder="Create a password") }}
+                </div>
+
+                </div>
+
+                <div> 
+                {{ signupform.confirm_password(class_="form-control", placeholder="Confirm password") }}
+              </div>
+
+                <div class="mt-4 mb-0">
+
+                {{ signupform.btn(class_="btn btn-primary") }}
+                {{ signupform.csrf_token }}
+
+              </div>
+
+           </div>
+          </div>
+
+          <div> <a href="/login"> Already have an account? Login here </a> </div>
+
+          <div> <a href="/vet/register"> Are you a Vet Doc? Register to our website. </a> </div>
+
+
+    </form>
+
+          </div>
+        </div>
+
+        <!-- static pic function -->
+          <div class="row">
+              <div class="col background-pic-2"></div>            
+          </div>
+
+{%endblock%}
+
+
+
+
+
+   
+    
