@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 83fd398bf330
+Revision ID: fc35414f9ade
 Revises: 
-Create Date: 2023-08-15 00:52:00.651924
+Create Date: 2023-08-18 08:56:11.530362
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '83fd398bf330'
+revision = 'fc35414f9ade'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -28,6 +28,10 @@ def upgrade():
     sa.Column('user_fullname', sa.String(length=100), nullable=False),
     sa.Column('user_email', sa.String(length=120), nullable=True),
     sa.Column('user_pwd', sa.String(length=120), nullable=True),
+    sa.Column('user_address', sa.String(length=120), nullable=True),
+    sa.Column('user_bio', sa.String(length=120), nullable=True),
+    sa.Column('date_time_created', sa.DateTime(), nullable=True),
+    sa.Column('last_updated', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('user_id')
     )
     op.create_table('vet',
@@ -43,21 +47,28 @@ def upgrade():
     sa.Column('amount', sa.Float(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('bills_date', sa.DateTime(), nullable=True),
-    sa.Column('bills_status', sa.Enum('pending', 'failed', 'paid'), server_default='pending', nullable=False),
+    sa.Column('bills_status', sa.Enum('Pending', 'Failed', 'Paid'), server_default='Pending', nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['pet_owner.user_id'], ),
     sa.PrimaryKeyConstraint('bills_id')
     )
     op.create_table('pet',
     sa.Column('pet_id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('pet_cat_id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('pet_name', sa.String(length=50), nullable=False),
+    sa.Column('pet_breed', sa.String(length=50), nullable=True),
     sa.Column('pet_descript', sa.Text(), nullable=True),
     sa.Column('pet_pic', sa.String(length=100), nullable=True),
-    sa.Column('pet_gender', sa.Enum('male', 'female'), server_default='female', nullable=False),
+    sa.Column('pet_gender', sa.Enum('Male', 'female'), server_default='Female', nullable=False),
     sa.Column('pet_color', sa.String(length=10), nullable=False),
+    sa.Column('pet_status', sa.Enum('Active', 'Inactive'), server_default='Active', nullable=False),
+    sa.Column('date_time_created', sa.DateTime(), nullable=True),
+    sa.Column('last_updated', sa.DateTime(), nullable=True),
     sa.Column('pet_weight_at_reg', sa.Float(), nullable=True),
     sa.Column('pet_dob', sa.DateTime(), nullable=True),
+    sa.Column('pet_likes', sa.String(length=100), nullable=True),
+    sa.Column('pet_dislikes', sa.String(length=100), nullable=True),
+    sa.Column('pet_comments', sa.String(length=200), nullable=True),
     sa.ForeignKeyConstraint(['pet_cat_id'], ['category.cat_id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['pet_owner.user_id'], ),
     sa.PrimaryKeyConstraint('pet_id')
@@ -83,7 +94,7 @@ def upgrade():
     sa.Column('bills_id', sa.Integer(), nullable=False),
     sa.Column('pay_refno', sa.Integer(), nullable=False),
     sa.Column('pay_date', sa.DateTime(), nullable=True),
-    sa.Column('pay_status', sa.Enum('pending', 'failed', 'paid'), server_default='pending', nullable=False),
+    sa.Column('pay_status', sa.Enum('Pending', 'Failed', 'Paid'), server_default='Pending', nullable=False),
     sa.ForeignKeyConstraint(['bills_id'], ['my_bills.bills_id'], ),
     sa.PrimaryKeyConstraint('pay_id')
     )

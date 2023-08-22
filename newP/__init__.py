@@ -16,6 +16,6 @@ def createapp():
     return app
 
 app = createapp()
-from newP import admin_routes, user_routes, forms, models
+from newP import user_routes, forms, models, vet_routes
 
 #Load the routes, forms, models (everything you will want to access any other place just by typing "from fapp import...")

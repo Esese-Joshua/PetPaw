@@ -2,6 +2,7 @@ import re,random,os, json, requests
 
 from flask import render_template, request, redirect, flash, make_response, session, url_for
 from sqlalchemy.sql import text
+from sqlalchemy.exc import SQLAlchemyError
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
@@ -9,7 +10,7 @@ from datetime import datetime
 
 from newP import app, csrf
 from newP.models import db, Pet_owner, Vet, Pet, Pet_medical_record, My_bills, Payment, Category
-from newP.forms import SignupForm, UserProfileForm, LoginForm, PetProfileForm
+from newP.forms import SignupForm, UserProfileForm, LoginForm, PetProfileForm, EditPetProfileForm
 
 
 def login_required(f):
@@ -62,36 +63,30 @@ def story():
     return render_template("pet_owner/fullstory.html")
 
 
-
 @app.route("/profile", methods = ["POST","GET"])
 @login_required
-def user_profile():
+def pet_owner_profile():
     pform = UserProfileForm()
-    useronline = session.get("userid")
-    userdeets = db.session.query(Pet_owner).get(useronline)
+    user_id = session.get("userid")
+    userdeets = db.session.query(Pet_owner).get(user_id)
     
-    if request.method == "GET": 
-        return render_template("pet_owner/profile.html", pform=pform, userdeets=userdeets)
-    else:
-        
-        if pform.validate_on_submit():
-            fullname = request.pform.get("fullname")
-            gender = request.form.get("gender")
-            # user_dob = request.form.get("dob")
-            picture = request.files.get("pix")
+    if request.method == "POST": 
 
-            filename = pform.pix.data.filename
-            
-            picture.save("newP/static/images/profile/"+filename)
-            userdeets.user_fullname = fullname
-            userdeets.user_gender = gender
-            userdeets.user_pix = filename
+        userdeets.user_address = request.form["address"]
+        userdeets.user_fullname = request.form["fullname"]
+        userdeets.user_email = request.form["email"]
+        userdeets.user_bio = request.form["bio"]
+        userdeets.last_updated = datetime.utcnow()
+
+        try:
             db.session.commit()
-
             flash("Profile Updated!")
             return redirect("/dashboard")
-        else:
-            return render_template("pet_owner/profile.html", pform=pform, userdeets=userdeets)
+        except:
+            flash("Opps!")
+            return redirect("/dashboard")
+    else:
+        return render_template("pet_owner/profile.html", pform=pform, userdeets=userdeets)
 
 
 @app.route("/signup",methods=["POST","GET"])
@@ -147,6 +142,7 @@ def login():
         else:
              flash("Invalid credentials")
              return redirect("/login")
+
 
 @app.route("/signout")
 def signout():
@@ -229,10 +225,12 @@ def paystack_landing():
             return "Payment was not successful. Please try again!"
          
 
-@app.route("/allpets")
-def all_pets():
+@app.route("/mypets")
+def view_pets():
     if session.get("user_loggedin") != None:
-        pets = db.session.query(Pet).all()
+
+        pets = db.session.query(Pet).filter_by(user_id=session['userid']).all()
+    
         return render_template("pet_owner/mypets.html", pets=pets)
     else:
         flash("Access Denied", category='danger')
@@ -250,7 +248,7 @@ def delete__pet(id):
         db.session.delete(check)
         db.session.commit()
         flash(f"Pet {check.pet_name} has been deleted!", category="success")
-        return redirect("/allpets")
+        return redirect("/mypets")
     
 
 @app.route("/addpet", methods=["POST","GET"])
@@ -272,6 +270,10 @@ def addpet():
         dob = request.form.get("dob")
         cover = request.files.get("cover")
         descript = request.form.get("descript")
+        breed = request.form.get("breed")
+        likes = request.form.get("likes")
+        dislikes = request.form.get("dislikes")
+        comments = request.form.get("comments")
 
         # validate name and file
         if title != "" and cover:
@@ -282,13 +284,13 @@ def addpet():
             
             if ext.lower() in allowed:
                 cover.save("newP/static/collections/" +newname)
-                P = Pet(pet_name=title,pet_descript=descript,pet_pic=newname,pet_gender=gender,pet_color=color,pet_cat_id=petcat,pet_dob=dob,pet_weight_at_reg=weight)
+                P = Pet(pet_name=title,pet_descript=descript,pet_pic=newname,pet_gender=gender,pet_color=color,pet_cat_id=petcat,pet_dob=dob,pet_weight_at_reg=weight,user_id=session['userid'],pet_breed=breed,pet_likes=likes,pet_dislikes=dislikes,pet_comments=comments)
 
                 db.session.add(P)
                 db.session.commit()
 
                 flash("Pet has been added", category='success')
-                return redirect("/allpets")
+                return redirect("/mypets")
             else:
                 flash("Please upload only type jpg, png or jpeg", category="danger")
                 return redirect("/pet_owner/addpet")
@@ -297,3 +299,64 @@ def addpet():
             flash("Please ensure you complete the required fields", category="danger")
             return redirect("/addpet")
 
+
+@app.route("/pet_details/<int:pet_id>")
+def pet_details(pet_id):
+    if session.get("user_loggedin") != None:
+        pet = db.session.query(Pet).get(pet_id)
+        return render_template("pet_owner/pet_details.html", pets=[pet]) 
+    else:
+        flash("Access Denied", category='danger')
+        return redirect("/pet_owner/login")  
+    
+
+@app.route("/edit_pet/<int:pet_id>", methods = ["POST","GET"])
+@login_required
+def edit_pet_profile(pet_id):
+    pet_form = EditPetProfileForm()
+    petdetails = db.session.query(Pet).get(pet_id)
+
+    if request.method == "POST": 
+
+        petdetails.pet_name = request.form["pet_name"]
+        petdetails.pet_breed = request.form["breed"]
+        petdetails.pet_descript = request.form["descript"]
+        petdetails.pet_likes = request.form["likes"]
+        petdetails.pet_dislikes = request.form["dislikes"]
+        
+        try:
+            db.session.commit()
+            flash("Pet Profile Updated!")
+            #return redirect("/pet_details/" +pet_id)
+            return redirect("/mypets")
+
+        except:
+            flash("Opps, something went wrong! Please try again..")
+            #return redirect("/pet_details/" +pet_id)
+            return redirect("/mypets")
+        
+    else:
+        return render_template("pet_owner/petedit.html", pet_form=pet_form, petdetails=petdetails)
+
+
+@app.route("/disable_pet/<int:pet_id>", methods = ["POST","GET"])
+@login_required
+def disable_pet(pet_id):
+    petdetails = db.session.query(Pet).get(pet_id)
+
+    if request.method == "POST": 
+
+        petdetails.pet_comments = request.form["comment"]
+        petdetails.pet_status = "Inactive"      
+        
+        try:
+            db.session.commit()
+            flash("Pet Profile Updated!")
+            return redirect("/mypets")
+
+        except:
+            flash("Opps, something went wrong! Please try again..")
+            return redirect("/mypets")
+        
+    else:
+        return render_template("None") 

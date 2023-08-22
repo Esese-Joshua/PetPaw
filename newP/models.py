@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 db=SQLAlchemy()
 
 class Vet(db.Model):
-    vet_id=db.Column(db.Integer, autoincrement=True,primary_key=True)
+    vet_id = db.Column(db.Integer, autoincrement=True,primary_key=True)
     vet_fullname = db.Column(db.String(100),nullable=False)
     vet_email = db.Column(db.String(120)) 
     vet_pwd = db.Column(db.String(120),nullable=True)
@@ -14,6 +14,10 @@ class Pet_owner(db.Model):
     user_fullname = db.Column(db.String(100),nullable=False)
     user_email = db.Column(db.String(120)) 
     user_pwd = db.Column(db.String(120),nullable=True)
+    user_address = db.Column(db.String(120),nullable=True)
+    user_bio = db.Column(db.String(120),nullable=True)
+    date_time_created = db.Column(db.DateTime(), default=datetime.utcnow)
+    last_updated = db.Column(db.DateTime(), default=datetime.utcnow)
 
     #set relationship
     bills_petowner_relate = db.relationship('My_bills',back_populates='petownerbills_relate')
@@ -25,7 +29,7 @@ class My_bills(db.Model):
     amount = db.Column(db.Float,nullable=False)
     user_id = db.Column(db.Integer,db.ForeignKey('pet_owner.user_id'),nullable=False) 
     bills_date = db.Column(db.DateTime(), default=datetime.utcnow)
-    bills_status =db.Column(db.Enum('pending','failed','paid'),nullable=False, server_default=("pending"))  
+    bills_status =db.Column(db.Enum('Pending','Failed','Paid'),nullable=False, server_default=("Pending"))  
    
     #set relationships
     paybills_relate = db.relationship("Payment", back_populates="billsrelate")
@@ -35,14 +39,22 @@ class My_bills(db.Model):
 class Pet(db.Model):
     pet_id = db.Column(db.Integer, autoincrement=True,primary_key=True)
     pet_cat_id = db.Column(db.Integer,db.ForeignKey('category.cat_id'),nullable=False) 
-    # user_id = db.Column(db.Integer,db.ForeignKey('pet_owner.user_id'),nullable=False) 
+    user_id = db.Column(db.Integer,db.ForeignKey('pet_owner.user_id'),nullable=True) 
     pet_name = db.Column(db.String(50),nullable=False)
+    pet_breed = db.Column(db.String(50),nullable=True)
     pet_descript = db.Column(db.Text())
     pet_pic = db.Column(db.String(100))
-    pet_gender = db.Column(db.Enum('male','female'),nullable=False, server_default=("female"))
+    pet_gender = db.Column(db.Enum('Male','female'),nullable=False, server_default=("Female"))
     pet_color = db.Column(db.String(10),nullable=False)
+    pet_status = db.Column(db.Enum('Active','Inactive'),nullable=False, server_default=("Active"))
+    date_time_created = db.Column(db.DateTime(), default=datetime.utcnow)
+    last_updated = db.Column(db.DateTime(), default=datetime.utcnow)
     pet_weight_at_reg = db.Column(db.Float())
     pet_dob = db.Column(db.DateTime(), default=datetime.utcnow)
+    pet_likes = db.Column(db.String(100),nullable=True)
+    pet_dislikes = db.Column(db.String(100),nullable=True)
+    pet_comments = db.Column(db.String(200),nullable=True)
+
 
     #set relationships 
     catrelate = db.relationship("Category", back_populates="petrelate")
@@ -62,7 +74,7 @@ class Payment(db.Model):
     bills_id = db.Column(db.Integer,db.ForeignKey('my_bills.bills_id'),nullable=False) 
     pay_refno = db.Column(db.Integer,nullable=False)
     pay_date = db.Column(db.DateTime(), default=datetime.utcnow)
-    pay_status =db.Column(db.Enum('pending','failed','paid'),nullable=False, server_default=("pending"))  
+    pay_status =db.Column(db.Enum('Pending','Failed','Paid'),nullable=False, server_default=("Pending"))  
     
     #set relationship    
     billsrelate = db.relationship('My_bills',back_populates='paybills_relate') 

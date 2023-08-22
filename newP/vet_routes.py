@@ -54,7 +54,7 @@ def vetlogin():
     else:
         email= request.form.get('email')
         pwd=request.form.get('password')
-        vet_data = db.session.query(Vet).filter(Vet.vet_email==email,Vet.vet_pwd==pwd).first()
+        vet_data = db.session.query(Vet).filter(Vet.vet_email==email).first()
 
         if vet_data:
             hashedpwd = vet_data.vet_pwd
@@ -63,7 +63,7 @@ def vetlogin():
             if check_pwd:
                 session["vet_loggedin"] = True
                 session["vetid"] = vet_data.vet_id
-                return redirect("/vet_dashboard")
+                return redirect("/vet/dashboard")
             else:
                 flash("Incorrect credentials")
                 return redirect("/vet/login")

@@ -29,9 +29,21 @@ class PetProfileForm(FlaskForm):
     btn = SubmitField("Update Profile")
 
 
+class EditPetProfileForm(FlaskForm):
+    pet_name = StringField("Pet Name",validators=[DataRequired(message="Your Fullname is required")])
+    #status = StringField("Status",validators=[DataRequired(message="This field is required")])
+    breed = StringField("Breed",validators=[DataRequired(message="This field is required")])
+    descript = TextAreaField("About Your Pet",validators=[DataRequired(message="This field is optional")])
+    likes = TextAreaField("Likes",validators=[DataRequired(message="This field is optional")])
+    dislikes = TextAreaField("Dislikes",validators=[DataRequired(message="This field is optional")])
+    pic = FileField("Upload a Pet Cover Picture", validators=[FileRequired(), FileAllowed(["jpg", "png"], 'Images Only') ])
+    btn = SubmitField("Update Profile")
+
+
 class UserProfileForm(FlaskForm):
     fullname = StringField("Your Fullname",validators=[DataRequired(message="Your Fullname is required")])
     address = StringField("Address", validators=[DataRequired(message="This field is required")]) 
+    email = StringField("Email", validators=[DataRequired(message="This field is required")]) 
     pix = FileField("Display Picture", validators=[FileRequired(), FileAllowed(["jpg", "png"], 'Images Only') ])
     gender = StringField("Gender", validators=[DataRequired(message="This field is required")]) 
     bio = StringField("Bio", validators=[DataRequired(message="Optional")]) 

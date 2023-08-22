@@ -1,0 +1,117 @@
+{% extends ('pet_owner/login_layout.html') %}
+
+{% block content %}
+
+	{% block detailscontent %}
+
+		{% set message = get_flashed_messages() %}
+		{% for t in message %}
+		<p class="alert alert-info"> {{ t }} </p>
+		{% endfor %}
+	
+		<div class="row" style="margin-top: 3%">
+			<div class="col-md-1"> </div>
+				
+				<div class="col-md-2 d-grid gap-2">
+
+					<button type="button" class="btn btn-outline-dark"> <a href="/mypets"> MY PETS </a> </button>
+					
+					<button type="button" class="btn btn-outline-dark"> <a href="/medics"> MEDICAL RECORDS </a> </button>
+
+					<button type="button" class="btn btn-outline-dark"> <a href="/payment"> MY BILLS </a> </button>
+
+					<button type="button" class="btn btn-outline-dark"> <a href="/profile"> USER PROFILE </a> </button>
+
+                    <button type="button" class="btn btn-outline-dark"> <a href="/book_appointment"> BOOK APPOINTMENT </a> </button>
+
+                    
+
+				</div>
+		
+				<div class="col-md-4 footer"> 
+					<h3> Pet Details </h3>
+
+					{% for pet in pets %}
+						<div> 
+							<p> Pet Name: {{ pet.pet_name }} </p> 
+						
+							<p> Pet Category: {{ pet.catrelate.cat_name }} </p>
+						
+							<p> Pet Breed: {{ pet.pet_breed }} </p>
+					
+							<p> Gender: {{ pet.pet_gender }} </p>
+						
+							<p>Pet Status: {{ pet.pet_status }} </p>
+						
+							<p> Weight at Registration: {{ pet.pet_weight_at_reg }} </p>
+
+						</div>
+					{% endfor %}
+
+				</div>
+
+                <div class="col-md-4 footer"> 
+                    
+                    <p> Pet picture </p>
+                           
+                </div>
+                
+                <div class="row" style="margin-top: 3%; background-color: #FAF9F6;">
+                <div class="col-md-4"> 
+                    
+				{% for pet in pets %}
+                <h3> About Your Pet: </h3> 
+                <p> {{ pet.pet_descript}} </p> 
+
+                </div>
+
+			   <br><br>
+
+
+            <div class="col-md-4"> 
+            <h3> Likes: </h3>
+             <p> {{ pet.pet_likes }}</p>
+            </div>
+
+            <div class="col-md-4"> 
+			<h3>  Dislikes: </h3> 
+			<p> {{ pet.pet_dislikes }} </p>
+					
+             </div>
+
+				</div>
+
+				{% endfor %}
+		</div>
+
+		<!-- static pic function -->
+			<div class="row">
+				<div class="col background-pic">
+					</div>
+			 </div>
+
+
+		<!-- tetiarry navigators -->
+			<div class="row"> 
+					<div class="col tettiary-nav">
+						<ul style="display: flex;"> 
+							  <li> <a href ="https://www.madpaws.com.au/" target="blank"> Get a pet sitter today.. </a> </li>
+
+								<li> <a href ="vet.html">  Contact A Vet Today </a> </li>
+								
+									<li> <a href ="reports.html"> Reports & Analytics </a> </li>
+						</ul>
+					</div>
+
+			</div>
+
+			{% endblock detailscontent %}
+
+
+ <script src="jquery.js"></script>
+
+</body>
+</html>
+
+{% endblock %}
+
