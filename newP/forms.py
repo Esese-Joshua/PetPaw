@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField,TextAreaField, PasswordField
+from wtforms import StringField, SubmitField,TextAreaField, PasswordField, DateField
 from wtforms.validators import DataRequired, Email, Length, EqualTo
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 
@@ -50,3 +50,18 @@ class UserProfileForm(FlaskForm):
     btn = SubmitField("Update Profile")
 
 
+class VetProfileForm(FlaskForm):
+    fullname = StringField("Your Fullname",validators=[DataRequired(message="Your Fullname is required")])
+    address = StringField("Address", validators=[DataRequired(message="This field is required")]) 
+    email = StringField("Email", validators=[DataRequired(message="This field is required")]) 
+    pix = FileField("Display Picture", validators=[FileRequired(), FileAllowed(["jpg", "png"], 'Images Only') ])
+    gender = StringField("Gender", validators=[DataRequired(message="This field is required")]) 
+    bio = TextAreaField("Bio", validators=[DataRequired(message="Optional")]) 
+    btn = SubmitField("Update Profile")
+
+
+class AppointmentForm(FlaskForm):
+    comments = TextAreaField("Anything we should know?",validators=[DataRequired(message="This field is required")])
+    date = DateField("Pick a Date", validators=[DataRequired(message="This field is required")]) 
+    btn = SubmitField("Submit")
+ 

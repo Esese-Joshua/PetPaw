@@ -7,7 +7,27 @@ class Vet(db.Model):
     vet_id = db.Column(db.Integer, autoincrement=True,primary_key=True)
     vet_fullname = db.Column(db.String(100),nullable=False)
     vet_email = db.Column(db.String(120)) 
+    vet_gender = db.Column(db.Enum('Male','female'),nullable=False, server_default=("Female"))
     vet_pwd = db.Column(db.String(120),nullable=True)
+    vet_address = db.Column(db.String(120),nullable=True)
+    vet_bio = db.Column(db.String(120),nullable=True)
+
+    #set relationship
+    appointment_vet_relate = db.relationship('Appointment', back_populates='vet_appointment_relate')
+
+class Appointment(db.Model):
+    appointment_id = db.Column(db.Integer, autoincrement=True,primary_key=True)
+    user_id = db.Column(db.Integer,db.ForeignKey('pet_owner.user_id'),nullable=False)
+    pet_id = db.Column(db.Integer,db.ForeignKey('pet.pet_id'),nullable=False)
+    vet_id = db.Column(db.Integer,db.ForeignKey('vet.vet_id'),nullable=False)
+    appointment_date = db.Column(db.DateTime(), default=datetime.utcnow)
+    appointment_comments = db.Column(db.String(200), nullable=True)
+    appointment_status = db.Column(db.Enum('Accepted','Rejected','Pending','In-progress'),nullable=False, server_default=("In-progress"))
+
+    #set relationship
+    vet_appointment_relate = db.relationship('Vet', back_populates='appointment_vet_relate')
+
+    pet_owner_appointment_relate = db.relationship('Pet_owner', back_populates='appointment_pet_owner_relate')
 
 class Pet_owner(db.Model):  
     user_id = db.Column(db.Integer, autoincrement=True,primary_key=True)
@@ -21,6 +41,7 @@ class Pet_owner(db.Model):
 
     #set relationship
     bills_petowner_relate = db.relationship('My_bills',back_populates='petownerbills_relate')
+    appointment_pet_owner_relate = db.relationship('Appointment', back_populates='pet_owner_appointment_relate')
 
 
 class My_bills(db.Model):
@@ -89,13 +110,13 @@ class Pet_medical_record(db.Model):
     date = db.Column(db.DateTime(), default=datetime.utcnow) 
 
 
-class Diagnosis_treatment(db.Model):
-    diagnosis_treatment_id = db.Column(db.Integer, autoincrement=True,primary_key=True)
+class Treatment(db.Model):
+    Treatment_id = db.Column(db.Integer, autoincrement=True,primary_key=True)
     pet_id = db.Column(db.Integer, db.ForeignKey('pet.pet_id'),nullable=False)  
     pet_diagnosis_id = db.Column(db.Integer, db.ForeignKey('diagnosis.pet_diagnosis_id'),nullable=False)  
-    diagnosis_treatment = db.Column(db.String(200),nullable=False)
-    vet_comment =db.Column(db.String(200),nullable=False)
-    date = db.Column(db.DateTime(), default=datetime.utcnow)
+    prescription = db.Column(db.String(200),nullable=False)
+    vet_remark =db.Column(db.String(200),nullable=False)
+    date_of_treatment = db.Column(db.DateTime(), default=datetime.utcnow)
 
 
 class Diagnosis(db.Model):

@@ -1,0 +1,51 @@
+{% extends "vet/vet_login_layout.html" %}
+
+
+{% block content %}
+
+<div class="content" style="margin-top: 3%">
+	<h3>Edit Profile </h3>
+
+	  <form method="post" enctype="multipart/form-data" action="/edit_vet_profile">
+		  
+		  <div class="mb-3">
+			  {{ vform.fullname.label }}
+			  {{ vform.csrf_token }}
+			  {{ vform.fullname(class_="form-control", value = vet_details.vet_fullname) }}
+		  </div>
+
+		  <div class="mb-3">
+			{{ vform.email.label }}
+			{{ vform.csrf_token }}
+			{{ vform.email(class_="form-control", value = vet_details.vet_email) }}
+		</div>
+
+		  <div class="mb-3">
+			{{ vform.address.label }}
+			{{ vform.csrf_token }}
+			{{ vform.address(class_="form-control", value = vet_details.vet_address) }}
+		</div>
+
+		  <div class="mb-3">
+			  {% if vet_details.pet_pix == None %}
+			  <p class="small"> Please Upload a Profile Picture </p>
+			  {% endif %}
+			  {{ vform.pix.label }}
+			  {{ vform.pix(class_="form-control") }}
+		  </div>
+
+		  <div class="mb-3">
+			{{ vform.bio.label }}
+			{{ vform.csrf_token }}
+			{{ vform.bio(class_="form-control") }}
+		</div>
+
+		  <div class="mb-3">
+			  {{ vform.btn(class_="btn btn-primary") }}
+		  </div>
+
+	  </form>
+   </div>
+
+  {%endblock%}
+

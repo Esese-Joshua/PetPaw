@@ -1,0 +1,51 @@
+{% extends "pet_owner/login_layout.html" %}
+
+
+{% block content %}
+
+<div class="content" style="margin-top: 3%">
+	<h3>Edit Profile </h3>
+
+	  <form method="post" enctype="multipart/form-data" action="/edit_profile">
+		  
+		  <div class="mb-3">
+			  {{ pform.fullname.label }}
+			  {{ pform.csrf_token }}
+			  {{ pform.fullname(class_="form-control", value = userdeets.user_fullname) }}
+		  </div>
+
+		  <div class="mb-3">
+			{{ pform.email.label }}
+			{{ pform.csrf_token }}
+			{{ pform.email(class_="form-control", value = userdeets.user_email) }}
+		</div>
+
+		  <div class="mb-3">
+			{{ pform.address.label }}
+			{{ pform.csrf_token }}
+			{{ pform.address(class_="form-control", value = userdeets.user_address) }}
+		</div>
+
+		  <div class="mb-3">
+			  {% if userdeets.user_pix == None %}
+			  <p class="small"> Please Upload a Profile Picture </p>
+			  {% endif %}
+			  {{ pform.pix.label }}
+			  {{ pform.pix(class_="form-control") }}
+		  </div>
+
+		  <div class="mb-3">
+			{{ pform.bio.label }}
+			{{ pform.csrf_token }}
+			{{ pform.bio(class_="form-control", value = userdeets.user_bio) }}
+		</div>
+
+		  <div class="mb-3">
+			  {{ pform.btn(class_="btn btn-primary") }}
+		  </div>
+
+	  </form>
+   </div>
+
+  {%endblock%}
+

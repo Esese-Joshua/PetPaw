@@ -1,0 +1,45 @@
+{% extends "pet_owner/login_layout.html" %}
+
+
+{% block content %}
+
+<div class="content" style="margin-top: 3%">
+	<h3>Book Appointment </h3>
+
+	  <form method="post" enctype="multipart/form-data" action="/book_appointment/{{ pets.pet_id }}">
+		  
+		  <div class="mb-3">
+			  {{ appointment_form.comments.label }}
+			  {{ appointment_form.csrf_token }}
+			  {{ appointment_form.comments(class_="form-control") }}
+		  </div>
+
+		  <div class="mb-3">
+			{{ appointment_form.date.label }}
+			{{ appointment_form.csrf_token }}
+			{{ appointment_form.date(class_="form-control") }}
+		  </div>
+
+		<!-- select doctors -->
+		  <div class="mb-3">
+			<label for="Category" class="form-label"> Available Vets </label>
+			<select name="vets" class="form-control" id="vets">
+			<option> Please Select a Vet </option>
+			
+			
+			{% for v in vets %}
+			<option value="{{ v.vet_id}}"> {{ v.vet_fullname }}</option>
+			{% endfor %}
+  
+			</select>
+			</div>
+
+		  <div class="mb-3">
+			  {{ appointment_form.btn(class_="btn btn-primary") }}
+		  </div>
+
+	  </form>
+   </div>
+
+  {%endblock%}
+

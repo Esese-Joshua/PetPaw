@@ -9,8 +9,8 @@ from datetime import datetime
 
 
 from newP import app, csrf
-from newP.models import db, Pet_owner, Vet, Pet, Pet_medical_record, My_bills, Payment, Category
-from newP.forms import SignupForm, UserProfileForm, LoginForm, PetProfileForm, EditPetProfileForm
+from newP.models import db, Pet_owner, Vet, Pet, Pet_medical_record, My_bills, Payment, Category, Appointment
+from newP.forms import SignupForm, UserProfileForm, LoginForm, PetProfileForm, EditPetProfileForm, AppointmentForm
 
 
 def login_required(f):
@@ -22,7 +22,6 @@ def login_required(f):
             flash("Access Denied, Please Login")
             return redirect("/login")
     return login_decorator
-
 
 
 @app.route("/")
@@ -63,30 +62,41 @@ def story():
     return render_template("pet_owner/fullstory.html")
 
 
-@app.route("/profile", methods = ["POST","GET"])
+@app.route("/edit_profile", methods = ["POST","GET"])
 @login_required
-def pet_owner_profile():
+def edit_profile():
     pform = UserProfileForm()
     user_id = session.get("userid")
     userdeets = db.session.query(Pet_owner).get(user_id)
     
     if request.method == "POST": 
-
-        userdeets.user_address = request.form["address"]
-        userdeets.user_fullname = request.form["fullname"]
-        userdeets.user_email = request.form["email"]
-        userdeets.user_bio = request.form["bio"]
-        userdeets.last_updated = datetime.utcnow()
-
         try:
+            userdeets.user_address = request.form["address"]
+            userdeets.user_fullname = request.form["fullname"]
+            userdeets.user_email = request.form["email"]
+            userdeets.user_bio = request.form["bio"]
+            userdeets.last_updated = datetime.utcnow()
+
             db.session.commit()
             flash("Profile Updated!")
-            return redirect("/dashboard")
+            return redirect("/profile")
+        
         except:
             flash("Opps!")
-            return redirect("/dashboard")
+            return redirect("/edit_profile")
     else:
-        return render_template("pet_owner/profile.html", pform=pform, userdeets=userdeets)
+        return render_template("pet_owner/edit_profile.html", pform=pform, userdeets=userdeets)
+    
+
+@app.route("/profile", methods = ["POST","GET"])
+def profile():
+    if session.get("user_loggedin") != None:
+        user_id = session["userid"]
+        user = db.session.query(Pet_owner).get(user_id)
+        return render_template("pet_owner/profile.html", users=[user]) 
+    else:
+        flash("Access Denied", category='danger')
+        return redirect("/pet_owner/login")  
 
 
 @app.route("/signup",methods=["POST","GET"])
@@ -150,7 +160,7 @@ def signout():
         session.pop("userid", None)
         session.pop("user_loggedin", None)
         flash("Signed Out Successfully")
-    return redirect("/signup")
+    return redirect("/login")
 
 
 @app.route("/medics", methods = ["POST","GET"])
@@ -317,14 +327,13 @@ def edit_pet_profile(pet_id):
     petdetails = db.session.query(Pet).get(pet_id)
 
     if request.method == "POST": 
-
-        petdetails.pet_name = request.form["pet_name"]
-        petdetails.pet_breed = request.form["breed"]
-        petdetails.pet_descript = request.form["descript"]
-        petdetails.pet_likes = request.form["likes"]
-        petdetails.pet_dislikes = request.form["dislikes"]
-        
         try:
+            petdetails.pet_name = request.form["pet_name"]
+            petdetails.pet_breed = request.form["breed"]
+            petdetails.pet_descript = request.form["descript"]
+            petdetails.pet_likes = request.form["likes"]
+            petdetails.pet_dislikes = request.form["dislikes"]
+            
             db.session.commit()
             flash("Pet Profile Updated!")
             #return redirect("/pet_details/" +pet_id)
@@ -360,3 +369,96 @@ def disable_pet(pet_id):
         
     else:
         return render_template("None") 
+    
+
+
+@app.route("/book_appointment/<int:pet_id>", methods = ["POST","GET"])
+def book_appointment(pet_id):
+    if session.get("user_loggedin") == None:
+        flash("Access Denied")
+        return redirect("/pet_owner/login")
+
+    if request.method == "GET":
+
+        vets = db.session.query(Vet).all()
+        pets = db.session.query(Pet).get(pet_id)
+
+        appointment_form = AppointmentForm()
+        
+        return render_template("pet_owner/book_appointment.html",appointment_form=appointment_form,pets=pets,vets=vets)
+    
+    else:
+        user_id = session.get("userid")
+
+        comments = request.form.get("comments")
+        date = request.form.get("date")
+        vet = request.form.get("vets")
+
+        #validatioins
+        if Appointment:
+            A = Appointment(appointment_comments=comments,appointment_date=date,vet_id=vet,user_id=user_id,pet_id=pet_id)
+
+            db.session.add(A)         
+            db.session.commit()
+
+            flash("Appointment has been booked. Please check your email for follow-up!")
+
+            return redirect("/appointments")
+
+        else:
+            flash("Opps, something went wrong! Please try again..")
+            return redirect("/mypets")
+            
+
+# @app.route("/appointments/<int:pet_id>")
+# def view_appointments(pet_id):
+#     if session.get("user_loggedin") != None:
+#         appointment = db.session.query(Appointment).get(pet_id)
+#         return render_template("pet_owner/appointments.html", appointments=[appointment]) 
+#     else:
+#         flash("Access Denied", category='danger')
+#         return redirect("/mypets")  
+
+@app.route("/appointments")
+def view_appointments():
+    if session.get("user_loggedin") != None:
+        user_id = session.get("userid")
+        appointment = db.session.query(Appointment).get(user_id)
+        return render_template("pet_owner/appointments.html", appointments=[appointment]) 
+    else:
+        flash("Access Denied", category='danger')
+        return redirect("/mypets")  
+
+
+
+@app.route("/edit_appointment/<int:appointment_id>", methods = ["POST","GET"])
+@login_required
+def edit_appointment(appointment_id):
+    appointment_form = AppointmentForm()
+    appointment_details = db.session.query(Appointment).get(appointment_id)
+
+    if request.method == "POST": 
+        try:
+            appointment_details.appointment_comments = request.form["comments"]
+            appointment_details.appointment_date = request.form["date"]
+                       
+            db.session.commit()
+            flash("Appointment has been Updated!")
+            return redirect("/appointments")
+
+        except:
+            flash("Opps, something went wrong! Please try again..")
+            return redirect("/appointments")
+        
+    else:
+        return render_template("pet_owner/edit_appointment.html", appointment_form=appointment_form, appointment_details=appointment_details)
+    
+
+@app.route("/delete_appointment/<id>")
+def delete_appointment(id):
+        check = db.session.query(Appointment).get_or_404(id)
+        db.session.delete(check)
+        db.session.commit()
+        # flash(f"Appointment for {check.pet_name} has been deleted!", category="success")
+        flash("You just deleted a scheduled Appointment for a pet!", category="success")
+        return redirect("/mypets")

@@ -29,7 +29,7 @@
 						<li> <a href="/"> Home </a> </li>
 						<li> <a href="/notfications"> Notfications </a> </li>
 						<li> <a href="/contactus"> Contact </a> <li>
-						<li> <a href="/profile"> Profile </a> </li>
+						<li> <a href="/vet_profile"> Profile </a> </li>
 						<li> <a href="/"> Sign out </a> </li>
 				  
                         
@@ -61,7 +61,7 @@
                             <a href="/vet/dashboard">
                             Dashboard
                             </a>
-                            
+                              
                             <a href="/vet/dashboard">
                                 
                                 Manage pets
@@ -84,18 +84,13 @@
 
                         
 
-                        <h1 class="mt-4">Dashboard</h1>
                         {% block breadcrumbs %}
                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item active">Dashboard</li>
                         </ol>
                         {% endblock breadcrumbs %}
 
-                        {% set messages = get_flashed_messages(with_categories=True) %}
-                            {% for c,m in messages %}
-                            <div class="alert alert-{{c}}"> {{ m }}</div>
-                            {% endfor %}
-
+                    
                         {% block admincontent %}
                         <div class="row">
                             <div class="col-xl-3 col-md-6">

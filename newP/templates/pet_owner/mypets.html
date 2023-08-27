@@ -6,12 +6,12 @@
 
 {% block content %}
 
-      <!-- {% block breadcrumbs %}
+      {% block breadcrumbs %}
       <ol class="breadcrumb mb-4">
-          <li class="breadcrumb-item"><a href="/user/dashboard">Dashboard</a></li>
+          <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
           <li class="breadcrumb-item active">All Pets</li>
       </ol>
-      {% endblock breadcrumbs %} -->
+      {% endblock breadcrumbs %}
 
          {% block admincontent %}
 
@@ -27,7 +27,7 @@
   <a href="/addpet" class="btn btn-outline-primary">Add Pet</a>
              </div>
          </div>
-         <div class="card mb-4 container">
+         <div class="card mb-4 container-fluid">
             
              <div class="card-body">
                 <table class="table">
@@ -63,7 +63,9 @@
 
           <a href="/edit_pet/{{ m.pet_id }}" class="btn btn-sm btn-primary">Edit</a> 
 
-          <a href="/pet_details/{{m.pet_id }}" class="btn btn-sm btn-primary">View Details</a> 
+          <a href="/pet_details/{{ m.pet_id }}" class="btn btn-sm btn-primary"> Details</a> 
+
+          <a href="/book_appointment/{{ m.pet_id }}" class="btn btn-sm btn-primary">Book Appointment</a>
 
           <!-- show modal -->
 

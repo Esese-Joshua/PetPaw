@@ -2,12 +2,26 @@ import re,random,os, json
 from flask import render_template, request,redirect, flash, make_response, session, url_for
 from sqlalchemy.sql import text
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
+from functools import wraps
+
+
 
 
 from newP import app, csrf
 from newP.models import db, Pet_owner, Vet, Pet, Category
-from newP.forms import SignupForm, LoginForm
+from newP.forms import SignupForm, LoginForm, VetProfileForm
 
+
+def login_required(f):
+    @wraps(f)
+    def login_decorator(*args,**kwargs):
+        if session.get("vetid") and session.get("vet_loggedin"):
+            return f(*args,**kwargs)
+        else:
+            flash("Access Denied, Please Login")
+            return redirect("/vet/login")
+    return login_decorator
 
 
 @app.route("/vet/dashboard")
@@ -78,4 +92,44 @@ def vet_logout():
         session.pop("vet_loggedin",None)
         flash("You have logged out successfully")
     return redirect("/pet_owner/signup")
+
+
+@app.route("/edit_vet_profile", methods = ["POST","GET"])
+@login_required
+def edit_vet_profile():
+    vform = VetProfileForm()
+    vet_id = session.get("vetid")
+    vet_details = db.session.query(Vet).get(vet_id)
+    
+    if request.method == "POST": 
+        try:
+            vet_details.vet_address = request.form["address"]
+            vet_details.vet_fullname = request.form["fullname"]
+            vet_details.vet_email = request.form["email"]
+            vet_details.vet_bio = request.form["bio"]
+            vet_details.last_updated = datetime.utcnow()
+
+            db.session.commit()
+            flash("Profile Updated!")
+            return redirect("/vet_profile")
+        
+        except:
+            flash("Opps... Ensure you fill out the form correctly, thank you.")
+            return redirect("/edit_vet_profile")
+    else:
+        return render_template("/vet/edit_vet_profile.html", vform=vform, vet_details=vet_details)
+    
+
+@app.route("/vet_profile", methods = ["POST","GET"])
+@login_required
+def vet_profile():
+    if session.get("vet_loggedin") != None:
+        vet_id = session["vetid"]
+        vet = db.session.query(Vet).get(vet_id)
+
+        return render_template("vet/vet_profile.html", vets=[vet]) 
+    else:
+        flash("Access Denied", category='danger')
+        return redirect("/vet/login")
+    
 

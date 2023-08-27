@@ -1,0 +1,77 @@
+{% extends ('vet/vet_login_layout.html') %}
+
+{% block content %}
+
+	{% block detailscontent %}
+
+		{% set message = get_flashed_messages() %}
+		{% for v in message %}
+		<p class="alert alert-info"> {{ v }} </p>
+		{% endfor %}
+	
+		<div class="row" style="margin-top: 3%">
+			<div class="col-md-1"> </div>
+				
+				<div class="col-md-2 d-grid gap-2">
+
+                    <button type="button" class="btn btn-outline-dark"> <a href="/edit_vet_profile"> EDIT PROFILE </a> </button>
+
+					<button type="button" class="btn btn-outline-dark"> <a href="/notfications"> NOTIFICATIONS </a> </button>
+					
+					<button type="button" class="btn btn-outline-dark"> <a href="/medicals"> MEDICAL RECORDS </a> </button>
+
+					<button type="button" class="btn btn-outline-dark"> <a href="/appoitments"> APPOINTMENTS </a> </button>
+
+				</div>
+
+				<div class="col-md-4 footer"> 
+
+					<h3> Vet Details </h3>
+							
+					{% for vet in vets %}
+
+					<div>
+
+						<p> Full Name: {{ vet.vet_fullname }} </p> 
+				
+						<p> Email: {{ vet.vet_email }} </p>
+
+						<p> Address: {{ vet.vet_address }} </p>
+										
+						<p> Gender: {{ vet.vet_gender }} </p>
+						
+						<p> Bio: {{ vet.vet_bio }} </p>
+						
+					</div>
+
+					{% endfor %}
+
+				</div>
+
+		</div>
+
+
+		<!-- tetiarry navigators -->
+			<div class="row" style="margin-top: 3%;"> 
+					<div class="col tettiary-nav"style="margin-left: 30%">
+						<ul style="display: flex;"> 
+							  <li> <a href ="https://www.madpaws.com.au/" target="blank"> Get a pet sitter today.. </a> </li>
+
+								<li> <a href ="vet.html">  Contact A Vet Today </a> </li>
+								
+									<li> <a href ="reports.html"> Reports & Analytics </a> </li>
+						</ul>
+					</div>
+
+			</div>
+
+			{% endblock detailscontent %}
+
+
+ <script src="jquery.js"></script>
+
+</body>
+</html>
+
+{% endblock %}
+

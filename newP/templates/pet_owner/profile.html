@@ -1,59 +1,76 @@
-{% if user_loggedin %}	
-	{% extends 'pet_owner/logout_layout.html' %}
-{% else %}
-	{% extends "pet_owner/login_layout.html" %}
-{% endif %}
-
+{% extends ('pet_owner/login_layout.html') %}
 
 {% block content %}
 
-<div class="content" style="margin-top: 3%">
-	<h3>Edit Profile </h3>
+	{% block detailscontent %}
 
-	<button> Edit profile </button>
-	  <form method="post" enctype="multipart/form-data" action="/profile">
-		  
-		  <div class="mb-3">
-			  {{ pform.fullname.label }}
-			  {{ pform.csrf_token }}
-			  {{ pform.fullname(class_="form-control", value = userdeets.user_fullname) }}
-		  </div>
+		{% set message = get_flashed_messages() %}
+		{% for t in message %}
+		<p class="alert alert-info"> {{ t }} </p>
+		{% endfor %}
+	
+		<div class="row" style="margin-top: 3%">
+			<div class="col-md-1"> </div>
+				
+				<div class="col-md-2 d-grid gap-2">
 
-		  <div class="mb-3">
-			{{ pform.email.label }}
-			{{ pform.csrf_token }}
-			{{ pform.email(class_="form-control", value = userdeets.user_email) }}
+                    <button type="button" class="btn btn-outline-dark"> <a href="/edit_profile"> EDIT PROFILE </a> </button>
+
+					<button type="button" class="btn btn-outline-dark"> <a href="/mypets"> MY PETS </a> </button>
+					
+					<button type="button" class="btn btn-outline-dark"> <a href="/medics"> MEDICAL RECORDS </a> </button>
+
+					<button type="button" class="btn btn-outline-dark"> <a href="/payment"> MY BILLS </a> </button>
+
+                    <button type="button" class="btn btn-outline-dark"> <a href="/book_appointment"> BOOK APPOINTMENT </a> </button>
+
+				</div>
+		
+				<div class="col-md-4 footer">
+                     
+					<h3> User Profile </h3>
+
+					{% for user in users %}
+
+					<div> 
+						<p> Full Name: {{ user.user_fullname }} </p> 
+						
+						<p> Email: {{ user.user_email }} </p>
+
+						<p> Address: {{ user.user_address }} </p>
+																
+						<p> Bio: {{ user.user_bio }} </p>
+
+					</div>
+
+					{% endfor %}
+
+				</div>
+
 		</div>
 
-		  <div class="mb-3">
-			{{ pform.address.label }}
-			{{ pform.csrf_token }}
-			{{ pform.address(class_="form-control", value = userdeets.user_address) }}
-		</div>
+		
+		<!-- tetiarry navigators -->
+			<div class="row" style="margin-top: 3%"> 
+					<div class="col tettiary-nav"style="margin-left: 30%">
+						<ul style="display: flex;"> 
+							  <li> <a href ="https://www.madpaws.com.au/" target="blank"> Get a pet sitter today.. </a> </li>
 
-		  <div class="mb-3">
-			  {% if userdeets.user_pix == None %}
-			  <p class="small"> Please Upload a Profile Picture </p>
-			  {% endif %}
-			  {{ pform.pix.label }}
-			  {{ pform.pix(class_="form-control") }}
-		  </div>
+								<li> <a href ="book_appointment.html">  Contact A Vet Today </a> </li>
+								
+									<li> <a href ="reports.html"> Reports & Analytics </a> </li>
+						</ul>
+					</div>
 
-		  <div class="mb-3">
-			{{ pform.bio.label }}
-			{{ pform.csrf_token }}
-			{{ pform.bio(class_="form-control", value = userdeets.user_bio) }}
-		</div>
+			</div>
 
-		  <div class="mb-3">
-			  {{ pform.btn(class_="btn btn-primary") }}
-		  </div>
+			{% endblock detailscontent %}
 
 
-		  
-  
-	  </form>
-   </div>
+ <script src="jquery.js"></script>
 
-  {%endblock%}
+</body>
+</html>
+
+{% endblock %}
 

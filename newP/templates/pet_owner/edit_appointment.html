@@ -1,0 +1,75 @@
+{% if user_loggedin %}	
+	{% extends 'pet_owner/logout_layout.html' %}
+{% else %}
+	{% extends "pet_owner/login_layout.html" %}
+{% endif %}
+
+{% block content %}
+
+
+		{% set messages = get_flashed_messages() %}
+		{% for w in messages %}
+		<p class="alert alert-info"> {{ w }} </p>
+		{% endfor %}
+
+	<!-- Edit pet -->
+		<div class="row" style="margin-top: 3%;">
+			<div class="col-md"> 
+
+			<div>
+            <form class="row g-3 justifier" enctype="multipart/form-data" method="post" action="/edit_appointment/{{ appointment_details.pet_id }} ">
+              
+                <div class="mb-3">
+					{{ appointment_form.comments.label }}
+					{{ appointment_form.csrf_token }}
+					{{ appointment_form.comments(class_="form-control") }}
+				</div> 
+
+				<div class="mb-3">
+					{{ appointment_form.date.label }}
+					{{ appointment_form.csrf_token }}
+					{{ appointment_form.date(class_="form-control", value = appointment_details.date) }}
+				</div>
+              			
+		        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">     
+
+				<div class="mb-3">
+					{{ appointment_form.btn(class_="btn btn-primary") }}
+				</div>
+              
+            </form>
+            </div>
+
+			</div>
+			
+		</div>
+
+		<!-- static pic function -->
+			<div>
+				
+			 </div>
+
+
+		<!-- tetiarry navigators -->
+			<div class="row"> 
+					<div class="col tettiary-nav">
+						<ul style="display: flex;"> 
+							  <li> <a href ="https://www.madpaws.com.au/" target="blank"> Get a pet sitter today.. </a> </li>
+
+								<li> <a href ="vet.html">  Contact A Vet Today </a> </li>
+								
+									<li> <a href ="reports.html"> Reports & Analytics </a> </li>
+						</ul>
+					</div>
+
+			</div>
+
+
+	
+	<script src="jquery.js"> </script>
+
+	</body>
+	</html>
+		
+	{%endblock%}
+		

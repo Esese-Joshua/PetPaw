@@ -1,0 +1,70 @@
+{% extends "pet_owner/login_layout.html" %}
+
+
+{% block content %}
+
+      {% block breadcrumbs %}
+      <ol class="breadcrumb mb-4">
+          <li class="breadcrumb-item"><a href="/mypets"> My Pets </a></li>
+          <li class="breadcrumb-item active"> View Appointments </li>
+      </ol>
+      {% endblock breadcrumbs %}
+
+         {% block admincontent %}
+
+         {% set messages= get_flashed_messages() %}
+         {% for m in messages %}
+         <p class="alert alert-success"> {{ m }} </p>
+         {% endfor %}
+
+
+         <div class="card mb-4" style="margin-top: 2%;">
+             <div class="card-header">
+                Click My Pets to Book New Appointment
+             </div>
+         </div>
+
+         <div class="card mb-4 container">
+            
+   <div class="card-body">
+     <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">S/N</th>
+      <!-- <th scope="col">Pet Name</th> -->
+      <th scope="col">Comments</th>
+      <th scope="col">Date Scheduled</th>
+      <th scope="col">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    {% for m in appointments %}
+    <tr>
+      <th scope="row"> {{ loop.index}} </th>
+        
+    <!-- {% for v in vet %}
+       <td> {{ v.pet_name }} </td>
+      {% endfor %} -->
+      
+      <td> {{ m.appointment_comments }} </td>
+      <td> {{ m.appointment_date }} </td>
+      <td> {{ m.appointment_status }} </td>
+      <td>
+        <a href="/edit_appointment/{{ m.appointment_id }}" class="btn btn-sm btn-primary">Edit</a> 
+
+        <a href="/delete_appointment/{{ m.appointment_id }}" onclick="return confirm('Are you sure you want to delete appointment for {{ m.pet_name }}?')" class="btn btn-sm btn-danger"> Delete </a> 
+
+      </td>
+
+    </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+           </div>
+            </div>
+
+    {% endblock admincontent %}
+
+{%endblock%}
