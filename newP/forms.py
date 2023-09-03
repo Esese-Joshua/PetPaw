@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField,TextAreaField, PasswordField, DateField
+from wtforms import StringField, SubmitField,TextAreaField, PasswordField, DateField, IntegerField
 from wtforms.validators import DataRequired, Email, Length, EqualTo
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 
@@ -65,3 +65,18 @@ class AppointmentForm(FlaskForm):
     date = DateField("Pick a Date", validators=[DataRequired(message="This field is required")]) 
     btn = SubmitField("Submit")
  
+
+class TreatmentForm(FlaskForm):
+    currentWeight = StringField("Pet Current Weight", validators=[DataRequired(message="This field is required")]) 
+    symptoms = StringField("Symptoms", validators=[DataRequired(message="This field is required")]) 
+    prescription = StringField("Prescription", validators=[DataRequired(message="This field is required")]) 
+    remark = StringField("Remark", validators=[DataRequired(message="This field is required")]) 
+    btn = SubmitField("Update Profile")
+
+
+class BillForm(FlaskForm):
+    amount = IntegerField("Amount", validators=[DataRequired(message="This field is required")]) 
+    deadline = DateField("Deadline", validators=[DataRequired(message="This field is required")]) 
+    bills_reference_number = StringField("Ref Number", validators=[DataRequired(message="This field is required")]) 
+    btn = SubmitField("Create Bill")
+    

@@ -1,0 +1,68 @@
+{% extends "vet/vet_login_layout.html" %}
+
+{% block content %}
+
+      {% block breadcrumbs %}
+      <ol class="breadcrumb mb-4">
+          <li class="breadcrumb-item">Dashboard</a></li>
+          <li class="breadcrumb-item active">Pet Details</li>
+      </ol>
+      {% endblock breadcrumbs %}
+
+         {% block admincontent %}
+
+         {% set messages= get_flashed_messages() %}
+         {% for m in messages %}
+         <p class="alert alert-success"> {{ m }} </p>
+         {% endfor %}
+
+
+         <div class="card mb-4" style="margin-top: 2%;">
+             <div class="card-header">
+                    The DataTable below shows all the details concerning this pet. Enjoy!
+             </div>
+         </div>
+         <div class="card mb-4 container-fluid">
+            
+             <div class="card-body">
+                <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">S/N</th>
+      <th scope="col">Pet Name</th>
+      <th scope="col">Category</th>
+      <th scope="col">Breed</th>
+      <th scope="col">Gender</th>
+      <th scope="col">Picture</th>
+      <th scope="col">Status</th>
+      <th scope="col">Weight at Registration </th>
+      <th scope="col">DOB</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    {% for m in pets %}
+    <tr>
+      <th scope="row"> {{ loop.index}} </th>
+      <td> {{ m.pet_name }} </td>
+      <td> {{ m.catrelate.cat_name }} </td>
+      <td> {{ m.pet_breed }} </td>
+      <td> {{ m.pet_gender }} </td>
+      
+      <td><img src="{{url_for('static',filename='/collections/'+m.pet_pic) }}" height="100"> </td>
+
+      <td> {{ m.pet_status }} </td>
+      <td> {{ m.pet_weight_at_reg }} </td>
+      <td> {{ m.pet_dob }} </td>
+    </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+           </div>
+            </div>
+
+    {% endblock admincontent %}
+
+
+{%endblock%}

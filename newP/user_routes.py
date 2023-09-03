@@ -9,7 +9,7 @@ from datetime import datetime
 
 
 from newP import app, csrf
-from newP.models import db, Pet_owner, Vet, Pet, Pet_medical_record, My_bills, Payment, Category, Appointment
+from newP.models import db, Pet_owner, Vet, Pet, Pet_medical_record, Bills, Payment, Category, Appointment
 from newP.forms import SignupForm, UserProfileForm, LoginForm, PetProfileForm, EditPetProfileForm, AppointmentForm
 
 
@@ -175,7 +175,7 @@ def medical_records():
 @app.route("/mybills", methods=["POST","GET"])
 def billing():
     if session.get("user_loggedin") != None:
-        pay = db.session.query(My_bills).all()
+        pay = db.session.query(Bills).all()
         return render_template("pet_owner/mybills.html", pay=pay)
     else:
         flash("Access Denied", category='danger')
@@ -394,7 +394,7 @@ def book_appointment(pet_id):
         date = request.form.get("date")
         vet = request.form.get("vets")
 
-        #validatioins
+        # validatioins / insert
         if Appointment:
             A = Appointment(appointment_comments=comments,appointment_date=date,vet_id=vet,user_id=user_id,pet_id=pet_id)
 
@@ -403,32 +403,37 @@ def book_appointment(pet_id):
 
             flash("Appointment has been booked. Please check your email for follow-up!")
 
-            return redirect("/appointments")
+            return redirect("/pet_appointments")
 
         else:
             flash("Opps, something went wrong! Please try again..")
             return redirect("/mypets")
             
 
-# @app.route("/appointments/<int:pet_id>")
-# def view_appointments(pet_id):
+
+# @app.route("/appointments")
+# def view_appointments():
 #     if session.get("user_loggedin") != None:
-#         appointment = db.session.query(Appointment).get(pet_id)
-#         return render_template("pet_owner/appointments.html", appointments=[appointment]) 
+#         user_id = session.get("userid")
+
+#         appointment = db.session.query(Appointment).get(user_id)
+#         return render_template("pet_owner/appointments.html", appointments=appointment) 
 #     else:
 #         flash("Access Denied", category='danger')
 #         return redirect("/mypets")  
 
-@app.route("/appointments")
-def view_appointments():
+
+@app.route("/pet_appointments")
+def view_pet_appointments():
     if session.get("user_loggedin") != None:
         user_id = session.get("userid")
-        appointment = db.session.query(Appointment).get(user_id)
-        return render_template("pet_owner/appointments.html", appointments=[appointment]) 
+
+        appointment = db.session.query(Appointment).filter_by(user_id=user_id).all()
+
+        return render_template("pet_owner/appointments.html", appointments=appointment) 
     else:
         flash("Access Denied", category='danger')
         return redirect("/mypets")  
-
 
 
 @app.route("/edit_appointment/<int:appointment_id>", methods = ["POST","GET"])
@@ -444,11 +449,11 @@ def edit_appointment(appointment_id):
                        
             db.session.commit()
             flash("Appointment has been Updated!")
-            return redirect("/appointments")
+            return redirect("/pet_appointments")
 
         except:
             flash("Opps, something went wrong! Please try again..")
-            return redirect("/appointments")
+            return redirect("/pet_appointments")
         
     else:
         return render_template("pet_owner/edit_appointment.html", appointment_form=appointment_form, appointment_details=appointment_details)
@@ -459,6 +464,6 @@ def delete_appointment(id):
         check = db.session.query(Appointment).get_or_404(id)
         db.session.delete(check)
         db.session.commit()
-        # flash(f"Appointment for {check.pet_name} has been deleted!", category="success")
+        # flash(f"Appointment for {pet.pet_name} has been deleted!", category="success")
         flash("You just deleted a scheduled Appointment for a pet!", category="success")
         return redirect("/mypets")

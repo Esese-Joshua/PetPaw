@@ -26,15 +26,17 @@
 
          <div class="card mb-4 container">
             
+          
    <div class="card-body">
      <table class="table">
   <thead>
     <tr>
       <th scope="col">S/N</th>
-      <!-- <th scope="col">Pet Name</th> -->
-      <th scope="col">Comments</th>
+      <th scope="col">Pet Name</th> 
+      <th scope="col" class="col-md-4">Comments</th>
       <th scope="col">Date Scheduled</th>
       <th scope="col">Status</th>
+      <th scope="col">Vet Name </th>
     </tr>
   </thead>
   <tbody>
@@ -42,18 +44,15 @@
     {% for m in appointments %}
     <tr>
       <th scope="row"> {{ loop.index}} </th>
-        
-    <!-- {% for v in vet %}
-       <td> {{ v.pet_name }} </td>
-      {% endfor %} -->
-      
+      <td> {{ m.pet_appointment_relate.pet_name }} </td>     
       <td> {{ m.appointment_comments }} </td>
       <td> {{ m.appointment_date }} </td>
       <td> {{ m.appointment_status }} </td>
+      <td> {{ m.vet_appointment_relate.vet_fullname }} </td>
       <td>
         <a href="/edit_appointment/{{ m.appointment_id }}" class="btn btn-sm btn-primary">Edit</a> 
 
-        <a href="/delete_appointment/{{ m.appointment_id }}" onclick="return confirm('Are you sure you want to delete appointment for {{ m.pet_name }}?')" class="btn btn-sm btn-danger"> Delete </a> 
+        <a href="/delete_appointment/{{ m.appointment_id }}" onclick="return confirm('Are you sure you want to delete appointment for {{ m.pet_appointment_relate.pet_name }}?')" class="btn btn-sm btn-danger"> Delete </a> 
 
       </td>
 

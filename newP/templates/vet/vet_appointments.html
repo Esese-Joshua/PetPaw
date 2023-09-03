@@ -1,0 +1,113 @@
+{% extends "vet/vet_login_layout.html" %}
+
+
+{% block content %}
+
+      {% block breadcrumbs %}
+      <ol class="breadcrumb mb-4">
+          <li class="breadcrumb-item"><a href="/vet/dashboard"> Dashboard </a></li>
+          <li class="breadcrumb-item active"> View Appointments </li>
+      </ol>
+      {% endblock breadcrumbs %}
+
+         {% block admincontent %}
+
+         {% set messages= get_flashed_messages() %}
+         {% for m in messages %}
+         <p class="alert alert-success"> {{ m }} </p>
+         {% endfor %}
+
+
+         <div class="card mb-4" style="margin-top: 2%;">
+             <div class="card-header">
+                Click Dashboard to go back to previous page!
+             </div>
+         </div>
+
+         <div class="card mb-4 container">
+            
+   <div class="card-body">
+     <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">S/N</th>
+      <th scope="col">Pet Name</th> 
+      <th scope="col" class="col-md-4">Comments</th>
+      <th scope="col">Date Scheduled</th>
+      <th scope="col">Status</th>
+      <th scope="col">Vet Name </th>
+    </tr>
+  </thead>
+  <tbody>
+
+    {% for m in appointments %}
+    <tr>
+      <th scope="row"> {{ loop.index}} </th>
+      <td> {{ m.pet_appointment_relate.pet_name }} </td>     
+      <td> {{ m.appointment_comments }} </td>
+      <td> {{ m.appointment_date }} </td>
+      <td> {{ m.appointment_status }} </td>
+      <td> {{ m.vet_appointment_relate.vet_fullname }} </td>
+    
+
+    <td> 
+     
+      {% if m.appointment_status == 'Accepted' %}
+
+      <a href="/reject_appointment/{{ m.appointment_id }}" onclick="return confirm('Are you sure you want to Decline appointmentd for {{ m.pet_appointment_relate.pet_name }}?')" class="btn btn-sm btn-danger"> Decline </a> 
+
+      <a href="/in_progress_appointment/{{ m.appointment_id }}" class="btn btn-sm btn-warning"> In Progress </a> 
+
+      {% endif %}
+
+
+      {% if m.appointment_status == 'Pending' %}
+
+      <a href="/accept_appointment/{{ m.appointment_id }}" onclick="return confirm('Are you sure you want to Accept appointmentd for {{ m.pet_appointment_relate.pet_name }}?')" class="btn btn-sm btn-primary"> Accept </a> 
+  
+      <a href="/reject_appointment/{{ m.appointment_id }}" onclick="return confirm('Are you sure you want to Decline appointmentd for {{ m.pet_appointment_relate.pet_name }}?')" class="btn btn-sm btn-danger"> Decline </a> 
+
+      {% endif %}
+  
+     
+      {% if m.appointment_status == 'In-progress' %}
+
+      <a href="/view_pet_details/{{ m.pet_id }}" class="btn btn-sm btn-info"> View Details </a> 
+
+      <a href="/treatment/{{ m.appointment_id }}" class="btn btn-sm btn-info"> Treatment </a>
+
+      <a href="/completed_appointment/{{ m.appointment_id }}" class="btn btn-sm btn-success"> Completed </a> 
+
+      {% endif %}
+
+
+      {% if m.appointment_status == 'Completed' %}
+
+      <a href="/billing/{{ m.appointment_id }}" class="btn btn-sm btn-success"> Create Bill </a> 
+
+      {% endif %}
+
+
+      {% if m.appointment_status == 'Treated' %}
+
+      <a href="/view_pet_details/{{ m.pet_id }}" class="btn btn-sm btn-info"> View Treatment </a> 
+
+      <a href="/completed_appointment/{{ m.appointment_id }}" class="btn btn-sm btn-success"> Completed </a> 
+
+      <a href="/billing/{{ m.appointment_id }}" class="btn btn-sm btn-success"> Create Bill </a> 
+
+      {% endif %}
+
+    </td>
+
+    </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+      </div>
+      </div>
+
+    {% endblock admincontent %}
+
+{%endblock%}

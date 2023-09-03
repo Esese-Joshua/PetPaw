@@ -1,6 +1,8 @@
-import re,random,os, json
+import re, random, os, json, random
 from flask import render_template, request,redirect, flash, make_response, session, url_for
 from sqlalchemy.sql import text
+from sqlalchemy.orm import joinedload
+
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from functools import wraps
@@ -9,8 +11,8 @@ from functools import wraps
 
 
 from newP import app, csrf
-from newP.models import db, Pet_owner, Vet, Pet, Category
-from newP.forms import SignupForm, LoginForm, VetProfileForm
+from newP.models import db, Pet_owner, Treatment, Vet, Pet, Category, Appointment, Bills
+from newP.forms import SignupForm, LoginForm, VetProfileForm, TreatmentForm, BillForm
 
 
 def login_required(f):
@@ -25,7 +27,7 @@ def login_required(f):
 
 
 @app.route("/vet/dashboard")
-def vethome():
+def vet_home():
         if session.get("vet_loggedin") != None:
             return render_template("vet/vet_dashboard.html")
         else:
@@ -61,7 +63,7 @@ def registers():
     
     
 @app.route("/vet/login", methods=["GET","POST"])
-def vetlogin():
+def vet_login():
     loginform = LoginForm()
     if request.method =="GET":
         return render_template("vet/login.html", loginform=loginform)
@@ -133,3 +135,166 @@ def vet_profile():
         return redirect("/vet/login")
     
 
+@app.route("/view_pet_details/<int:pet_id>")
+@login_required
+def view_pet_details(pet_id):
+    if session.get("vet_loggedin") != None:
+        pet = db.session.query(Pet).get(pet_id)
+        return render_template("vet/pet_details.html", pets=[pet]) 
+    else:
+        flash("Access Denied", category='danger')
+        return redirect("/vet/login")  
+    
+
+@app.route("/vet_appointments")
+@login_required
+def view_vet_appointments():
+    if session.get("vet_loggedin") != None:
+        vet_id = session.get("vetid")
+    
+        appointment = db.session.query(Appointment).filter_by(vet_id=vet_id).all()
+
+        return render_template("vet/vet_appointments.html", appointments=appointment) 
+    else:
+        flash("Access Denied", category='danger')
+        return redirect("/vet/dashboard")  
+
+
+@app.route("/accept_appointment/<int:appointment_id>")
+def accept_appointment(appointment_id):
+    appointment = Appointment.query.get_or_404(appointment_id)
+
+    appointment.appointment_status = 'Accepted'
+
+    db.session.commit()
+    return redirect("/vet_appointments")
+
+
+@app.route("/reject_appointment/<int:appointment_id>")
+def reject_appointment(appointment_id):
+    appointment = Appointment.query.get_or_404(appointment_id)
+
+    appointment.appointment_status = 'Rejected'
+    
+    db.session.commit()
+    return redirect("/vet_appointments")
+
+
+@app.route("/in_progress_appointment/<int:appointment_id>")
+def inprogress_appointment(appointment_id):
+    appointment = Appointment.query.get_or_404(appointment_id)
+
+    appointment.appointment_status = 'In-progress'
+
+    db.session.commit()
+    return redirect("/vet_appointments")
+
+
+@app.route("/completed_appointment/<int:appointment_id>")
+def concluded_appointment(appointment_id):
+    appointment = Appointment.query.get_or_404(appointment_id)
+
+    appointment.appointment_status = 'Completed'
+
+    db.session.commit()
+    return redirect("/vet_appointments")
+
+
+@app.route("/treatment/<int:appointment_id>", methods = ["POST","GET"])
+@login_required
+def treatment(appointment_id):
+    if session.get("vet_loggedin") == None:
+        flash("Access Denied")
+        return redirect("vet/login")
+    
+    appointment = db.session.query(Appointment).get(appointment_id)
+
+    if request.method == "GET":
+
+        treatment_form = TreatmentForm()
+        
+        return render_template("vet/treatment.html",appointment=appointment,treatment_form=treatment_form)
+    
+    else:
+        currentWeight = request.form.get("currentWeight")
+        symptoms = request.form.get("symptoms")
+        prescription = request.form.get("prescription")
+        remark = request.form.get("remark")
+
+        #validatioins / insert
+
+        if Treatment:
+            T = Treatment(pet_current_weight=currentWeight,symptoms=symptoms,vet_remark=remark,prescription=prescription,appointment_id=appointment_id)
+
+            db.session.add(T) 
+
+            appointment.appointment_status = 'Treated'
+
+            db.session.commit()
+
+            flash("All inputed Treatment fields have been submitted Doc!")
+            return redirect("/vet_appointments")
+
+        else:
+             flash("Opps, something went wrong! Please try again..")
+             return redirect("/view_pet_details")
+
+
+
+@app.route("/billing/<int:appointment_id>", methods=["GET","POST"])
+@login_required
+def create_bill(appointment_id):
+
+    appointment = db.session.query(Appointment).get(appointment_id)
+
+    # join the approprate tables so I can access the names of the vet and pet owner that are involed in this session
+    pet_owner = (
+        db.session.query(Pet_owner).join(Appointment, Pet_owner.user_id == Appointment.user_id).filter(Appointment.appointment_id == appointment_id).first()
+    )
+
+    vet = (
+        db.session.query(Vet).join(Appointment, Vet.vet_id == Appointment.vet_id).filter(Appointment.appointment_id == appointment_id).first()
+    )
+
+    # collect the first 2 letters from names
+    pet_owner_fullname = pet_owner.user_fullname
+
+    vet_name = vet.vet_fullname
+
+    first_two_letters_pet_owner_fullname = pet_owner_fullname[:2]
+    first_two_letters_vet_name = vet_name[:2]
+
+     # Generate three random integers between 1 and 100
+    random_figures = [random.randint(1, 100) for _ in range(3)]
+
+    # Convert the list to a non-separated string
+    random_figures_str = "".join(map(str, random_figures))
+
+ 
+    if request.method =="GET":
+        
+        bill_form = BillForm()
+
+        return render_template("vet/create_bill.html",appointment=appointment,bill_form=bill_form,pet_owner=pet_owner,
+        pet_owner_fullname=first_two_letters_pet_owner_fullname,vet_name=first_two_letters_vet_name,random_figures=random_figures_str)
+    
+    else:
+        amount = request.form.get("amount")
+        deadline = request.form.get("deadline")
+        bills_reference_number = request.form.get("bills_reference_number")
+                                
+
+        # validations
+        if Bills:
+            B = Bills(bills_amount=amount,bills_deadline=deadline,appointment_id=appointment_id,bills_reference_number=bills_reference_number)
+
+            db.session.add(B)
+
+            db.session.commit()
+
+            flash("Billing has been created successfully." )
+            return redirect("/vet_appointments")
+        else:
+            flash("Opps Sorry... something went wrong. Please try again")
+            return render_template("/billing/<int:appointment_id>")
+        

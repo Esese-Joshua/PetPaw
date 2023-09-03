@@ -67,12 +67,12 @@
                                 Manage pets
                             </a>
                        
-                            <a href="">
-                                Admin Users
+                            <a href="/vet_appointments">
+                                Appointments
                             </a>
 
                             <a href="tables.html">
-                                Registered Users
+                                Registered Pets
                             </a>
                         </div>
                     </div>
@@ -93,26 +93,31 @@
                     
                         {% block admincontent %}
                         <div class="row">
+                            
                             <div class="col-xl-3 col-md-6">
                                 <div class="card bg-primary text-white mb-4">
                                     <div class="card-body">Primary Card</div>
                                 </div>
                             </div>
+
                             <div class="col-xl-3 col-md-6">
                                 <div class="card bg-warning text-white mb-4">
                                     <div class="card-body">Warning Card</div>
                                 </div>
                             </div>
+
                             <div class="col-xl-3 col-md-6">
                                 <div class="card bg-success text-white mb-4">
                                     <div class="card-body">Success Card</div>
                                 </div>
+
                             </div>
                             <div class="col-xl-3 col-md-6">
                                 <div class="card bg-danger text-white mb-4">
                                     <div class="card-body">Danger Card</div>
                                 </div>
                             </div>
+
                         </div>
                         {% endblock admincontent %}
                         
@@ -120,9 +125,8 @@
                 </main>
 
                 {% block content %}
-				
-                {% endblock %}
                 
+                {%endblock%}
                
                 <!-- footer -->
 			<div class="row footer">

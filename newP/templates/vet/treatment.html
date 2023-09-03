@@ -1,0 +1,46 @@
+{% extends "vet/vet_login_layout.html" %}
+
+
+{% block content %}
+
+<div class="content" style="margin-top: 3%">
+
+	<h3> Possible Treatment Field </h3>
+
+	  <form method="post" enctype="multipart/form-data" action="/treatment/{{ appointment.appointment_id }}">
+		  
+		  <div class="mb-3">
+			  {{ treatment_form.currentWeight.label }}
+			  {{ treatment_form.csrf_token }}
+			  {{ treatment_form.currentWeight(class_="form-control", value = appointment.pet_current_weight) }}
+		  </div>
+
+		  <div class="mb-3">
+			{{ treatment_form.symptoms.label }}
+			{{ treatment_form.csrf_token }}
+			{{ treatment_form.symptoms(class_="form-control") }}
+		  </div>
+
+        <div class="mb-3">
+			{{ treatment_form.prescription.label }}
+			{{ treatment_form.csrf_token }}
+			{{ treatment_form.prescription(class_="form-control") }}
+		  </div>
+
+           <div class="mb-3">
+			{{ treatment_form.remark.label }}
+			{{ treatment_form.csrf_token }}
+			{{ treatment_form.remark(class_="form-control") }}
+		  </div>
+
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">  
+
+		  <div class="mb-3">
+			  {{ treatment_form.btn(class_="btn btn-primary") }}
+		  </div>
+
+	  </form>
+   </div>
+
+  {%endblock%}
+
