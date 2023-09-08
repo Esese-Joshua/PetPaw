@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from flask_sqlalchemy import SQLAlchemy
 
 db=SQLAlchemy()
@@ -24,7 +24,8 @@ class Appointment(db.Model):
     appointment_date = db.Column(db.DateTime(), default=datetime.utcnow)
     pet_current_weight = db.Column(db.Float())
     appointment_comments = db.Column(db.String(200), nullable=True)
-    appointment_status = db.Column(db.Enum('Accepted','Rejected','Pending','In-progress','Completed','Treated'),nullable=False, server_default=("Pending"))
+    appointment_status = db.Column(db.Enum('Accepted','Rejected','Treated', 'Pending','In-progress','Completed','Billed','Paid'),nullable=False, server_default=("Pending"))
+
 
     #set relationship
     vet_appointment_relate = db.relationship('Vet', back_populates='appointment_vet_relate')
@@ -49,6 +50,8 @@ class Treatment(db.Model):
    # set relationship    
     appointment_treatment_relate = db.relationship('Appointment', back_populates='treatment_appointment_relate')
 
+    # pet_treatment_relate = db.relationship('Pet', back_populates='treatment_pet_relate')
+
 
 class Pet_owner(db.Model):  
     user_id = db.Column(db.Integer, autoincrement=True,primary_key=True)
@@ -68,7 +71,7 @@ class Bills(db.Model):
     bills_id = db.Column(db.Integer, autoincrement=True,primary_key=True) 
     bills_amount = db.Column(db.Float,nullable=False)
     appointment_id = db.Column(db.Integer,db.ForeignKey('appointment.appointment_id'),nullable=False) 
-    bills_deadline = db.Column(db.DateTime(),default=datetime.utcnow)
+    bills_deadline = db.Column(db.Date())
     bills_status = db.Column(db.Enum('Pending','Paid'),nullable=False, server_default=("Pending"))  
     bills_reference_number = db.Column(db.String(100), nullable=False)
 
@@ -76,6 +79,18 @@ class Bills(db.Model):
     paybills_relate = db.relationship("Payment", back_populates="billsrelate")
 
     appointment_bills_relate = db.relationship('Appointment',back_populates='bills_appointment_relate')
+
+
+class Payment(db.Model):
+    pay_id = db.Column(db.Integer, autoincrement=True,primary_key=True)
+    bills_id = db.Column(db.Integer,db.ForeignKey('bills.bills_id'),nullable=False) 
+    pay_amt = db.Column(db.Float, nullable=False) 
+    pay_refno = db.Column(db.Integer,nullable=False)
+    pay_date = db.Column(db.Date())
+    pay_status =db.Column(db.Enum('Pending','Failed','Paid'),nullable=False, server_default=("Pending"))  
+    
+    #set relationship    
+    billsrelate = db.relationship('Bills',back_populates='paybills_relate') 
 
 
 class Pet(db.Model):
@@ -92,7 +107,7 @@ class Pet(db.Model):
     date_time_created = db.Column(db.DateTime(), default=datetime.utcnow)
     last_updated = db.Column(db.DateTime(), default=datetime.utcnow)
     pet_weight_at_reg = db.Column(db.Float())
-    pet_dob = db.Column(db.DateTime(), default=datetime.utcnow)
+    pet_dob = db.Column(db.Date())
     pet_likes = db.Column(db.String(100),nullable=True)
     pet_dislikes = db.Column(db.String(100),nullable=True)
     pet_comments = db.Column(db.String(200),nullable=True)
@@ -103,6 +118,8 @@ class Pet(db.Model):
 
     appointment_pet_relate = db.relationship('Appointment', back_populates='pet_appointment_relate')
 
+    # treatment_pet_relate = db.relationship('Treatment', back_populates='pet_treatment_relate')
+
 
 class Category(db.Model):
     cat_id=db.Column(db.Integer, autoincrement=True,primary_key=True)
@@ -110,18 +127,6 @@ class Category(db.Model):
 
     #set relationships
     petrelate = db.relationship("Pet", back_populates="catrelate")
-
-
-class Payment(db.Model):
-    pay_id = db.Column(db.Integer, autoincrement=True,primary_key=True)
-    pay_amt = db.Column(db.Float, nullable=False)  
-    bills_id = db.Column(db.Integer,db.ForeignKey('bills.bills_id'),nullable=False) 
-    pay_refno = db.Column(db.Integer,nullable=False)
-    pay_date = db.Column(db.DateTime(), default=datetime.utcnow)
-    pay_status =db.Column(db.Enum('Pending','Failed','Paid'),nullable=False, server_default=("Pending"))  
-    
-    #set relationship    
-    billsrelate = db.relationship('Bills',back_populates='paybills_relate') 
 
     
 class Pet_medical_record(db.Model):

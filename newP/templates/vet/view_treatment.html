@@ -1,0 +1,57 @@
+{% extends "vet/vet_login_layout.html" %}
+
+{% block content %}
+
+      {% block breadcrumbs %}
+      <ol class="breadcrumb mb-4">
+          <li class="breadcrumb-item active"> Treatments </li>
+      </ol>
+      {% endblock breadcrumbs %}
+
+         {% block admincontent %}
+
+         {% set messages= get_flashed_messages() %}
+         {% for m in messages %}
+         <p class="alert alert-success"> {{ m }} </p>
+         {% endfor %}
+
+
+         <div class="card mb-4" style="margin-top: 2%;">
+             <div class="card-header">
+                    The DataTable below shows the registered treatments for this pet. Enjoy!
+             </div>
+         </div>
+         <div class="card mb-4 container">
+            
+             <div class="card-body">
+                <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">S/N</th>
+      <th scope="col">Symptoms</th>
+      <th scope="col">Prescription</th>
+      <th scope="col">Remark</th>
+      <th scope="col">Pet Current Weight</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    {% for m in treatments %}
+    <tr>
+      <th scope="row"> {{ loop.index}} </th>
+      <td> {{ m.symptoms }} </td>
+      <td> {{ m.prescription }} </td>
+      <td> {{ m.vet_remark }} </td>
+      <td> {{ m.pet_current_weight }} </td>
+    </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+           </div>
+            </div>
+
+    {% endblock admincontent %}
+
+
+{%endblock%}

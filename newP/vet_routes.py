@@ -247,7 +247,7 @@ def create_bill(appointment_id):
 
     appointment = db.session.query(Appointment).get(appointment_id)
 
-    # join the approprate tables so I can access the names of the vet and pet owner that are involed in this session
+    # join the appropriate tables so I can access the names of the vet and pet owner that are involed in this session
     pet_owner = (
         db.session.query(Pet_owner).join(Appointment, Pet_owner.user_id == Appointment.user_id).filter(Appointment.appointment_id == appointment_id).first()
     )
@@ -256,40 +256,43 @@ def create_bill(appointment_id):
         db.session.query(Vet).join(Appointment, Vet.vet_id == Appointment.vet_id).filter(Appointment.appointment_id == appointment_id).first()
     )
 
-    # collect the first 2 letters from names
+    # Create a payment ref number by collecting the first 2 letters from pet owner and vet name
     pet_owner_fullname = pet_owner.user_fullname
-
     vet_name = vet.vet_fullname
 
     first_two_letters_pet_owner_fullname = pet_owner_fullname[:2]
     first_two_letters_vet_name = vet_name[:2]
 
-     # Generate three random integers between 1 and 100
+    # Generate three random integers between 1 and 100
     random_figures = [random.randint(1, 100) for _ in range(3)]
 
-    # Convert the list to a non-separated string
+    # Convert the list of random generated numbers to a string
     random_figures_str = "".join(map(str, random_figures))
 
- 
-    if request.method =="GET":
+    # Convert the ref number variables to a list
+    ref_no_list = [first_two_letters_pet_owner_fullname, first_two_letters_vet_name, random_figures_str]
+
+    # Convert to the list of ref number variables to string
+    ref_no_string = '_'.join(ref_no_list)
+
+
+    if request.method == "GET":
         
         bill_form = BillForm()
 
-        return render_template("vet/create_bill.html",appointment=appointment,bill_form=bill_form,pet_owner=pet_owner,
-        pet_owner_fullname=first_two_letters_pet_owner_fullname,vet_name=first_two_letters_vet_name,random_figures=random_figures_str)
+        return render_template("vet/create_bill.html",appointment=appointment,bill_form=bill_form,pet_owner=pet_owner, ref_no_string=ref_no_string)
     
     else:
         amount = request.form.get("amount")
         deadline = request.form.get("deadline")
-        bills_reference_number = request.form.get("bills_reference_number")
                                 
 
         # validations
         if Bills:
-            B = Bills(bills_amount=amount,bills_deadline=deadline,appointment_id=appointment_id,bills_reference_number=bills_reference_number)
+            B = Bills(bills_amount=amount,bills_deadline=deadline,appointment_id=appointment_id,bills_reference_number=ref_no_string)
 
             db.session.add(B)
-
+            appointment.appointment_status = 'Billed'
             db.session.commit()
 
             flash("Billing has been created successfully." )
@@ -298,3 +301,29 @@ def create_bill(appointment_id):
             flash("Opps Sorry... something went wrong. Please try again")
             return render_template("/billing/<int:appointment_id>")
         
+
+
+@app.route("/view_treatment/<int:treatment_id>", methods=["POST", "GET"])
+@login_required
+def view_treatment(treatment_id):
+    if session.get("vet_loggedin") != None:
+        
+        treatment = db.session.query(Treatment).get(treatment_id)
+        return render_template("vet/view_treatment.html", treatments=[treatment]) 
+    else:
+        flash("Access Denied", category='danger')
+        return redirect("/vet/login")  
+    
+
+@app.route("/view_bill/<int:bills_id>", methods=["POST", "GET"])
+@login_required
+def view_bill(bills_id):
+    
+    if session.get("vet_loggedin") != None:
+        bill = db.session.query(Bills).get(bills_id)
+
+        return render_template("vet/view_bill.html", bills=[bill]) 
+    else:
+        flash("Access Denied", category='danger')
+        return redirect("/vet/login") 
+   

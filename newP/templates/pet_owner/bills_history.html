@@ -1,0 +1,60 @@
+{% extends "pet_owner/login_layout.html" %}
+
+
+{% block content %}
+
+      {% block breadcrumbs %}
+      <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/dashboard/"> Dashboard </a></li>
+          <li class="breadcrumb-item active"> Bills History </li>
+      </ol>
+      {% endblock breadcrumbs %}
+
+         {% block admincontent %}
+
+         {% set messages= get_flashed_messages() %}
+         {% for m in messages %}
+         <p class="alert alert-success"> {{ m }} </p>
+         {% endfor %}
+
+
+         <div class="card mb-4" style="margin-top: 2%;">
+             <div class="card-header">
+                Click Dashboard to go back to previous page!
+             </div>
+         </div>
+
+         <div class="card mb-4 container">
+            
+   <div class="card-body">
+     <table class="table">
+  <thead>
+    <tr>
+
+        <th scope="col">S/N</th>
+        <th scope="col">Pet Name</th>
+        <th scope="col">Amount (#)</th>
+        <th scope="col">Status</th>
+        <th scope="col">Deadline</th>
+      </tr>
+    </thead>
+    <tbody>
+  
+      {% for m in bills %}
+      <tr>
+        <th scope="row"> {{ loop.index}} </th>
+        <td> {{ m.appointment_bills_relate.pet_appointment_relate.pet_name }} </td>
+        <td> {{ m.bills_amount }} </td>
+        <td> {{ m.bills_status }} </td>
+        <td> {{ m.bills_deadline }} </td>
+      </tr>
+      {% endfor %}
+
+  </tbody>
+</table>
+      </div>
+      </div>
+
+    {% endblock admincontent %}
+
+{%endblock%}

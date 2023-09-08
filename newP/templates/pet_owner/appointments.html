@@ -37,6 +37,7 @@
       <th scope="col">Date Scheduled</th>
       <th scope="col">Status</th>
       <th scope="col">Vet Name </th>
+      <th scope="col">Action(s) </th>
     </tr>
   </thead>
   <tbody>
@@ -50,9 +51,24 @@
       <td> {{ m.appointment_status }} </td>
       <td> {{ m.vet_appointment_relate.vet_fullname }} </td>
       <td>
+
+        {% if m.appointment_status == 'Pending' %}
+
         <a href="/edit_appointment/{{ m.appointment_id }}" class="btn btn-sm btn-primary">Edit</a> 
 
         <a href="/delete_appointment/{{ m.appointment_id }}" onclick="return confirm('Are you sure you want to delete appointment for {{ m.pet_appointment_relate.pet_name }}?')" class="btn btn-sm btn-danger"> Delete </a> 
+
+        {% endif %}
+
+        
+        {% if m.appointment_status == 'Billed' %}
+
+        <a href="/bills/3" class="btn btn-sm btn-success"> Pay Bill </a> 
+
+        {% endif %}
+
+
+        
 
       </td>
 

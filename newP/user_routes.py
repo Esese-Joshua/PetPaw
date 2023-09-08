@@ -1,4 +1,4 @@
-import re,random,os, json, requests
+import re,random,os, json, requests, sys
 
 from flask import render_template, request, redirect, flash, make_response, session, url_for
 from sqlalchemy.sql import text
@@ -9,8 +9,8 @@ from datetime import datetime
 
 
 from newP import app, csrf
-from newP.models import db, Pet_owner, Vet, Pet, Pet_medical_record, Bills, Payment, Category, Appointment
-from newP.forms import SignupForm, UserProfileForm, LoginForm, PetProfileForm, EditPetProfileForm, AppointmentForm
+from newP.models import db, Pet_owner, Vet, Pet, Pet_medical_record, Bills, Category, Appointment
+from newP.forms import SignupForm, UserProfileForm, LoginForm, PetProfileForm, EditPetProfileForm, AppointmentForm, BillForm
 
 
 def login_required(f):
@@ -96,7 +96,7 @@ def profile():
         return render_template("pet_owner/profile.html", users=[user]) 
     else:
         flash("Access Denied", category='danger')
-        return redirect("/pet_owner/login")  
+        return redirect("/login")  
 
 
 @app.route("/signup",methods=["POST","GET"])
@@ -163,77 +163,13 @@ def signout():
     return redirect("/login")
 
 
-@app.route("/medics", methods = ["POST","GET"])
-@login_required
-def medical_records():
-    useronline = session.get("Pet_medical_record_id")
-    userdeets = db.session.query(Pet_medical_record).get(useronline)
-    return render_template("/pet_owner/medics.html", userdeets=userdeets)
+# @app.route("/medics", methods = ["POST","GET"])
+# @login_required
+# def medical_records():
+#     useronline = session.get("Pet_medical_record_id")
+#     userdeets = db.session.query(Pet_medical_record).get(useronline)
+#     return render_template("/pet_owner/medics.html", userdeets=userdeets)
 
-
-
-@app.route("/mybills", methods=["POST","GET"])
-def billing():
-    if session.get("user_loggedin") != None:
-        pay = db.session.query(Bills).all()
-        return render_template("pet_owner/mybills.html", pay=pay)
-    else:
-        flash("Access Denied", category='danger')
-        return redirect("/pet_owner/login")
-
-
-@app.route("/payment")
-def make_payment():
-    userdeets = db.session.query(Pet_owner).get(session.get("userid")) 
-    if session.get("ref") != None:
-        ref = session["ref"]
-        # get the details of the transaction and display to the user
-        tranxdetails = db.session.query(Payment).filter(Payment.pay_refno==ref).first()
-        return render_template("pet_owner/payments.html",userdeets=userdeets,tranxdetails=tranxdetails)
-    else:
-        return redirect("/mybills")
-
-
-@app.route("/paystack",methods=["POST"])
-def paystack():
-    if session.get("ref") != None:
-        ref = session["ref"]
-
-        tranxdetails = db.session.query(Payment).filter(Payment.pay_refno==ref).first()
-
-        amount = Payment.pay_amt
-
-        # connect to paystack api
-        url = "https://api.paystack.co/transaction/initialize"
-        headers = {"Content-Type":"application/json","Authorization":"Bearer sk_test_f98bb4d17a3dda76e2367174394dd525ff3bb221"}
-        data = {'amount': amount * 100, "reference":ref}
-        response = requests.post(url, headers=headers, data=json.dumps(data))
-        rspjson = response.json()
-
-        if rspjson['status'] == True:
-            paygateway = rspjson['data']['authorization_url']
-            return redirect(paygateway)
-        else:
-            return rspjson
-    else:
-        return redirect("/payment")
-    
-@app.route("/landing")
-def paystack_landing():
-    ref= session.get("ref")
-    if ref == None:
-        return redirect("/payment")
-    else: # connect to paystack
-        headers = {"Content-Type":"application/json","Authorization":"Bearer sk_test_f98bb4d17a3dda76e2367174394dd525ff3bb221"}
-
-        verifyurl = "https://api.paystack.co/transaction/verify/"+str(ref)
-        response = requests.get(verifyurl, headers=headers)
-        rspjson = json.loads(response.text)
-        if rspjson['status'] == True: # payment successful
-            return rspjson
-        else: 
-            return "Payment was not successful. Please try again!"
-         
 
 @app.route("/mypets")
 def view_pets():
@@ -244,14 +180,14 @@ def view_pets():
         return render_template("pet_owner/mypets.html", pets=pets)
     else:
         flash("Access Denied", category='danger')
-        return redirect("/pet_owner/login")
+        return redirect("/login")
     
 
 @app.route("/deletepet/<id>")
 def delete__pet(id):
     if session.get("user_loggedin") == None:
         flash("Access Denied", category="danger")
-        return redirect("/pet_owner/login")
+        return redirect("/login")
     else:
         check = db.session.query(Pet).get_or_404(id)
         os.remove("newP/static/collections/" + check.pet_pic)
@@ -265,7 +201,7 @@ def delete__pet(id):
 def addpet():
     if session.get("user_loggedin") == None:
         flash("Access Denied")
-        return redirect("/pet_owner/login")
+        return redirect("/login")
     
     if request.method=="GET":
         cat = db.session.query(Category).all()
@@ -317,7 +253,7 @@ def pet_details(pet_id):
         return render_template("pet_owner/pet_details.html", pets=[pet]) 
     else:
         flash("Access Denied", category='danger')
-        return redirect("/pet_owner/login")  
+        return redirect("/login")  
     
 
 @app.route("/edit_pet/<int:pet_id>", methods = ["POST","GET"])
@@ -376,7 +312,7 @@ def disable_pet(pet_id):
 def book_appointment(pet_id):
     if session.get("user_loggedin") == None:
         flash("Access Denied")
-        return redirect("/pet_owner/login")
+        return redirect("/login")
 
     if request.method == "GET":
 
@@ -393,10 +329,11 @@ def book_appointment(pet_id):
         comments = request.form.get("comments")
         date = request.form.get("date")
         vet = request.form.get("vets")
+        current_weight = request.form.get("current_weight")
 
         # validatioins / insert
         if Appointment:
-            A = Appointment(appointment_comments=comments,appointment_date=date,vet_id=vet,user_id=user_id,pet_id=pet_id)
+            A = Appointment(appointment_comments=comments,appointment_date=date,vet_id=vet,user_id=user_id,pet_id=pet_id,pet_current_weight=current_weight)
 
             db.session.add(A)         
             db.session.commit()
@@ -467,3 +404,121 @@ def delete_appointment(id):
         # flash(f"Appointment for {pet.pet_name} has been deleted!", category="success")
         flash("You just deleted a scheduled Appointment for a pet!", category="success")
         return redirect("/mypets")
+
+
+@app.route("/bills/<int:bills_id>", methods=["POST","GET"])
+@login_required
+def billing(bills_id):
+
+    if session.get("user_loggedin") != None:
+        if request.method == "GET":
+            bill_form = BillForm()
+            bill = db.session.query(Bills).get(bills_id)
+
+            return render_template("pet_owner/pay_bills.html", bill=bill,bill_form=bill_form)
+        else:
+            flash("Access Denied", category='danger')
+            return redirect("/login")
+    else:
+        flash("Access Denied", category='danger')
+        return redirect("/pet_appointments")
+    
+
+
+@app.route("/bills_history")
+@login_required
+def view_bills_history():
+    
+    if session.get("user_loggedin") != None:
+    
+        bill = db.session.query(Bills).all()
+
+        return render_template("pet_owner/bills_history.html", bills=bill) 
+    else:
+        flash("Access Denied", category='danger')
+        return redirect("/dashboard/")  
+
+
+
+@app.route("/paystack/<string:bills_reference_number>",methods=["POST"])
+@login_required
+def paystack(bills_reference_number):
+
+    bill = db.session.query(Bills).filter(Bills.bills_reference_number == bills_reference_number).first()
+
+    if bill:
+
+        amount = bill.bills_amount
+        email = bill.appointment_bills_relate.pet_owner_appointment_relate.user_email
+        
+        # connect to paystack api
+        url = "https://api.paystack.co/transaction/initialize"
+        headers = {"Content-Type":"application/json","Authorization":"Bearer sk_test_f98bb4d17a3dda76e2367174394dd525ff3bb221"}
+
+        data = {
+            'amount':amount * 100, 
+            "email":email, 
+            'ref':bills_reference_number,
+            "callback_url":"http://127.0.0.1:1957/landing"
+            }
+
+        response = requests.post(url, headers=headers, data=json.dumps(data))
+
+        json_response = response.json()
+
+        if json_response['status'] == True:
+            paygateway = json_response['data']['authorization_url']
+
+            session["bills_reference_number"] = bills_reference_number
+
+            return redirect(paygateway)
+
+        else:
+            return json_response
+    else:
+        flash("Bill not found", category='danger')
+        return redirect("/pet_appointments")
+  
+    
+
+@app.route("/landing") 
+def paystack_landing():
+
+    bills_reference_number = session.get("bills_reference_number")
+
+    reference = request.args.get("reference")
+
+# Join the appropriate tables to UPDATE APPOINTMENT STATUS AND BILLING STATUS
+
+    # bills = db.session.query(Bills).filter(Bills.bills_reference_number == bills_reference_number).first()
+
+    appointment = (
+        db.session.query(Appointment)
+        .join(Bills, Appointment.appointment_id == Bills.appointment_id)
+        .filter(Bills.bills_reference_number == bills_reference_number).
+        first()
+    )
+
+    # connect to paystack
+    headers = {"Content-Type":"application/json","Authorization":"Bearer sk_test_f98bb4d17a3dda76e2367174394dd525ff3bb221"}
+
+    verifyurl = "https://api.paystack.co/transaction/verify/"+str(reference)
+
+    response = requests.get(verifyurl, headers=headers)
+    json_response = json.loads(response.text)
+
+    if json_response['status'] == True: # payment successful
+
+        
+        appointment.appointment_status = 'Paid'
+        # bills.bills_status = 'Paid'
+
+        db.session.commit()
+
+        flash("Payment was succesful")
+        return redirect("/pet_appointments")
+        
+    else:
+        flash("Payment Failed")
+        return redirect("/pet_appointments")
+

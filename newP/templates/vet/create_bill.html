@@ -5,12 +5,6 @@
 
 <div class="content" style="margin-top: 3%">
 
-	{{ pet_owner_fullname }}
-
-	{{ vet_name }}
-
-	{{ random_figures }}
-
 	<h3> Create Bill </h3>
 
 	  <form method="post" enctype="multipart/form-data" action="/billing/{{ appointment.appointment_id }}">
@@ -25,12 +19,6 @@
 			{{ bill_form.deadline.label }}
 			{{ bill_form.csrf_token }}
 			{{ bill_form.deadline(class_="form-control") }}
-		</div>
-
-		<div class="mb-3">
-			{{ bill_form.bills_reference_number.label }}
-			{{ bill_form.csrf_token }}
-			{{ bill_form.bills_reference_number(class_="form-control", value=pet_owner_fullname, vet_name=vet_name, random_figures=random_figures) }}
 		</div>
 
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">  

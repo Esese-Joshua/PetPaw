@@ -5,7 +5,6 @@
 
       {% block breadcrumbs %}
       <ol class="breadcrumb mb-4">
-          <li class="breadcrumb-item"><a href="/vet/dashboard"> Dashboard </a></li>
           <li class="breadcrumb-item active"> View Appointments </li>
       </ol>
       {% endblock breadcrumbs %}
@@ -24,34 +23,38 @@
              </div>
          </div>
 
-         <div class="card mb-4 container">
+         <div class="card mb-4 container-fluid">
             
    <div class="card-body">
      <table class="table">
   <thead>
     <tr>
+
+
       <th scope="col">S/N</th>
       <th scope="col">Pet Name</th> 
-      <th scope="col" class="col-md-4">Comments</th>
+      <th scope="col" class="col-md-3">Comments</th>
       <th scope="col">Date Scheduled</th>
-      <th scope="col">Status</th>
       <th scope="col">Vet Name </th>
+      <th scope="col">Appointment Status</th>
+      <th scope="col">Action(s)</th>
+
+
     </tr>
   </thead>
   <tbody>
 
     {% for m in appointments %}
+
     <tr>
       <th scope="row"> {{ loop.index}} </th>
       <td> {{ m.pet_appointment_relate.pet_name }} </td>     
       <td> {{ m.appointment_comments }} </td>
       <td> {{ m.appointment_date }} </td>
-      <td> {{ m.appointment_status }} </td>
       <td> {{ m.vet_appointment_relate.vet_fullname }} </td>
-    
-
+      <td> {{ m.appointment_status }} </td>  
     <td> 
-     
+          
       {% if m.appointment_status == 'Accepted' %}
 
       <a href="/reject_appointment/{{ m.appointment_id }}" onclick="return confirm('Are you sure you want to Decline appointmentd for {{ m.pet_appointment_relate.pet_name }}?')" class="btn btn-sm btn-danger"> Decline </a> 
@@ -72,11 +75,9 @@
      
       {% if m.appointment_status == 'In-progress' %}
 
-      <a href="/view_pet_details/{{ m.pet_id }}" class="btn btn-sm btn-info"> View Details </a> 
+      <a href="/view_pet_details/{{ m.pet_id }}" class="btn btn-sm btn-info"> Pet Details </a> 
 
       <a href="/treatment/{{ m.appointment_id }}" class="btn btn-sm btn-info"> Treatment </a>
-
-      <a href="/completed_appointment/{{ m.appointment_id }}" class="btn btn-sm btn-success"> Completed </a> 
 
       {% endif %}
 
@@ -90,13 +91,27 @@
 
       {% if m.appointment_status == 'Treated' %}
 
-      <a href="/view_pet_details/{{ m.pet_id }}" class="btn btn-sm btn-info"> View Treatment </a> 
-
-      <a href="/completed_appointment/{{ m.appointment_id }}" class="btn btn-sm btn-success"> Completed </a> 
+      <a href="/view_treatment/{{ m.appointment_id }}" class="btn btn-sm btn-info"> View Treatment </a> 
 
       <a href="/billing/{{ m.appointment_id }}" class="btn btn-sm btn-success"> Create Bill </a> 
 
       {% endif %}
+
+
+      {% if m.appointment_status == 'Billed' %}
+
+      <a href="/view_bill/{{ m.appointment_id }}" class="btn btn-sm btn-info"> View Bill </a> 
+
+      {% endif %}
+
+
+      <!-- {% for b in billing %}
+      {% if b.payment_status == 'Pending' %}
+
+      <a href="/view_pet_details/{{ m.pet_id }}" class="btn btn-sm btn-info"> Show Bills </a> 
+
+      {% endif %}
+      {% endfor %} -->
 
     </td>
 

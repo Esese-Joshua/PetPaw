@@ -1,0 +1,52 @@
+{% extends ('pet_owner/login_layout.html') %}
+
+{% block content %}
+
+        <div style="margin-top: 3%;" class="row">
+
+          <h3> Pay Bill </h3>
+
+            <div class="col card-body" style="margin-top: 3%"> 
+           
+            <form method="post" action="/paystack/{{ bill.bills_reference_number}}">       
+ 
+        <div class="row mb-3">
+            <div class="col-md-12">
+                      
+                <div class="form-floating mb-3">
+                  {{ bill_form.amount(class_="form-control", value=bill.bills_amount, disabled=True) }}
+                  {{ bill_form.amount.label }}
+                 </div>
+
+                 <div class="form-floating mb-3">
+                  {{ bill_form.ref_number(class_="form-control", value = bill.bills_reference_number, disabled=True) }}
+                  {{ bill_form.ref_number.label }}
+                 </div>
+
+                 <div class="form-floating mb-3">
+                 
+                  <p> Deadline: {{bill.bills_deadline}} </p>
+
+                 </div>
+
+                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">  
+
+
+                <div class="mt-4 mb-0">
+                <button class="btn btn-primary"> Pay Bill </button>
+                </div>
+
+              </div>
+            </div>
+
+    </form>
+
+
+{%endblock%}
+
+
+
+
+
+   
+    
