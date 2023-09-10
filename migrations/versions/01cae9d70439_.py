@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: a4802fa3f887
+Revision ID: 01cae9d70439
 Revises: 
-Create Date: 2023-09-08 17:39:21.526259
+Create Date: 2023-09-09 21:44:23.575596
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'a4802fa3f887'
+revision = '01cae9d70439'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -58,7 +58,7 @@ def upgrade():
     sa.Column('date_time_created', sa.DateTime(), nullable=True),
     sa.Column('last_updated', sa.DateTime(), nullable=True),
     sa.Column('pet_weight_at_reg', sa.Float(), nullable=True),
-    sa.Column('pet_dob', sa.DateTime(), nullable=True),
+    sa.Column('pet_dob', sa.Date(), nullable=True),
     sa.Column('pet_likes', sa.String(length=100), nullable=True),
     sa.Column('pet_dislikes', sa.String(length=100), nullable=True),
     sa.Column('pet_comments', sa.String(length=200), nullable=True),
@@ -71,7 +71,7 @@ def upgrade():
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('pet_id', sa.Integer(), nullable=False),
     sa.Column('vet_id', sa.Integer(), nullable=False),
-    sa.Column('appointment_date', sa.DateTime(), nullable=True),
+    sa.Column('appointment_date', sa.Date(), nullable=True),
     sa.Column('pet_current_weight', sa.Float(), nullable=True),
     sa.Column('appointment_comments', sa.String(length=200), nullable=True),
     sa.Column('appointment_status', sa.Enum('Accepted', 'Rejected', 'Treated', 'Pending', 'In-progress', 'Completed', 'Billed', 'Paid'), server_default='Pending', nullable=False),
@@ -80,59 +80,15 @@ def upgrade():
     sa.ForeignKeyConstraint(['vet_id'], ['vet.vet_id'], ),
     sa.PrimaryKeyConstraint('appointment_id')
     )
-    op.create_table('diagnosis',
-    sa.Column('pet_diagnosis_id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('pet_id', sa.Integer(), nullable=False),
-    sa.Column('disease_name', sa.String(length=20), nullable=False),
-    sa.ForeignKeyConstraint(['pet_id'], ['pet.pet_id'], ),
-    sa.PrimaryKeyConstraint('pet_diagnosis_id')
-    )
-    op.create_table('food_type',
-    sa.Column('food_type_id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('pet_id', sa.Integer(), nullable=False),
-    sa.Column('food_discription', sa.String(length=100), nullable=False),
-    sa.Column('food_nutritious_value', sa.String(length=100), nullable=False),
-    sa.ForeignKeyConstraint(['pet_id'], ['pet.pet_id'], ),
-    sa.PrimaryKeyConstraint('food_type_id')
-    )
-    op.create_table('pet_breed',
-    sa.Column('pet_breed_id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('pet_id', sa.Integer(), nullable=False),
-    sa.Column('pet_breed_name', sa.String(length=50), nullable=False),
-    sa.ForeignKeyConstraint(['pet_id'], ['pet.pet_id'], ),
-    sa.PrimaryKeyConstraint('pet_breed_id')
-    )
-    op.create_table('pet_medical_record',
-    sa.Column('Pet_medical_record_id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('pet_id', sa.Integer(), nullable=False),
-    sa.Column('pet_current_weight', sa.Integer(), nullable=True),
-    sa.Column('pet_vaccination_status', sa.String(length=10), nullable=False),
-    sa.Column('pet_last_visit_date', sa.DateTime(), nullable=True),
-    sa.Column('date', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['pet_id'], ['pet.pet_id'], ),
-    sa.PrimaryKeyConstraint('Pet_medical_record_id')
-    )
     op.create_table('bills',
     sa.Column('bills_id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('bills_amount', sa.Float(), nullable=False),
     sa.Column('appointment_id', sa.Integer(), nullable=False),
-    sa.Column('bills_deadline', sa.DateTime(), nullable=True),
+    sa.Column('bills_deadline', sa.Date(), nullable=True),
     sa.Column('bills_status', sa.Enum('Pending', 'Paid'), server_default='Pending', nullable=False),
     sa.Column('bills_reference_number', sa.String(length=100), nullable=False),
     sa.ForeignKeyConstraint(['appointment_id'], ['appointment.appointment_id'], ),
     sa.PrimaryKeyConstraint('bills_id')
-    )
-    op.create_table('pet_feeding',
-    sa.Column('Pet_feeding_id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('pet_id', sa.Integer(), nullable=False),
-    sa.Column('pet_food_type_id', sa.Integer(), nullable=False),
-    sa.Column('pet_feeding_time', sa.DateTime(), nullable=True),
-    sa.Column('pet_feeding_quantity', sa.Float(), nullable=True),
-    sa.Column('pet_feeding_note', sa.String(length=100), nullable=False),
-    sa.Column('date', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['pet_food_type_id'], ['food_type.food_type_id'], ),
-    sa.ForeignKeyConstraint(['pet_id'], ['pet.pet_id'], ),
-    sa.PrimaryKeyConstraint('Pet_feeding_id')
     )
     op.create_table('treatment',
     sa.Column('treatment_id', sa.Integer(), autoincrement=True, nullable=False),
@@ -149,7 +105,7 @@ def upgrade():
     sa.Column('bills_id', sa.Integer(), nullable=False),
     sa.Column('pay_amt', sa.Float(), nullable=False),
     sa.Column('pay_refno', sa.Integer(), nullable=False),
-    sa.Column('pay_date', sa.DateTime(), nullable=True),
+    sa.Column('pay_date', sa.Date(), nullable=True),
     sa.Column('pay_status', sa.Enum('Pending', 'Failed', 'Paid'), server_default='Pending', nullable=False),
     sa.ForeignKeyConstraint(['bills_id'], ['bills.bills_id'], ),
     sa.PrimaryKeyConstraint('pay_id')
@@ -161,12 +117,7 @@ def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
     op.drop_table('payment')
     op.drop_table('treatment')
-    op.drop_table('pet_feeding')
     op.drop_table('bills')
-    op.drop_table('pet_medical_record')
-    op.drop_table('pet_breed')
-    op.drop_table('food_type')
-    op.drop_table('diagnosis')
     op.drop_table('appointment')
     op.drop_table('pet')
     op.drop_table('vet')

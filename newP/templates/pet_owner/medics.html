@@ -2,59 +2,64 @@
 
 {% block content %}
 
-    <div class="container">
-    <div class="card mb-4" style="margin-top: 3%">
-       
-        <div class="card-body">
-           <table class="table table-hover">
-            <thead>
-            <tr>
-                <th scope="col"> S/N </th>
-                <th scope="col"> Name </th>
-                <th scope="col"> Current Weight </th>
-                <th scope="col"> Vaccination Status </th>
-                <th scope="col"> Medication </th>
-                <th scope="col"> Vet Comment </th>
-            </tr>
-            </thead>
+        {% block breadcrumbs %}
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="/dashboard/"> Dashboard </a></li>
+            <li class="breadcrumb-item active"> Pet Medical Records </li>
+        </ol>
+        {% endblock breadcrumbs %}
 
-            <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>Green</td>
-                <td>Green</td>
-                <td>She needs to be in top form</td>
-            </tr>
+            {% block admincontent %}
 
-            <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>Green</td>
-                <td>Green</td>
-                <td>She needs to be in top form</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td colspan="2">Larry the Bird</td>
-                <td>Yellow</td>
-                <td> Yellow</td>
-                <td>She needs to be in top form</td>
-            </tr>
-
-        </tbody>
-
-        </table>
-                        
-        </div>
-        </div>
-    </div>
+            {% set messages= get_flashed_messages() %}
+            {% for m in messages %}
+            <p class="alert alert-success"> {{ m }} </p>
+            {% endfor %}
 
 
-	
-  {%endblock%}
+            <div class="card mb-4" style="margin-top: 2%;">
+                <div class="card-header">
+                    The DataTable below shows the a reocrd of all your pet(s) medical records. Click on Dashboard to go back. Enjoy!
+                </div>
+            </div>
+            <div class="card mb-4 container">
+            
+                <div class="card-body">
+                <table class="table">
+    <thead>
+    <tr>
+        <th scope="col">S/N</th>
+        <th scope="col">Pet Name</th>
+        <th scope="col">Symptoms</th>
+        <th scope="col">Current Weight (kg) </th>
+        <th scope="col">Prescription</th>
+        <th scope="col">Vet Name</th>
+        <th scope="col">Vet Comments</th>
+        <th scope="col"> Last Date of Appointment </th>
+    </tr>
+    </thead>
+    <tbody>
+
+    {% for m in treatments %}
+    <tr>
+    <th scope="row"> {{ loop.index}} </th>
+    <td> {{ m.appointment_treatment_relate.pet_appointment_relate.pet_name }} </td>
+    <td> {{ m.symptoms }} </td>
+    <td> {{ m.pet_current_weight }} </td>
+    <td> {{ m.prescription }} </td>
+    <td> {{ m.appointment_treatment_relate.vet_appointment_relate.vet_fullname }} </td>
+    <td> {{ m.vet_remark }} </td>
+    <td> {{ m.appointment_treatment_relate.appointment_date }} </td>
+
+    </tr>
+    {% endfor %}
+
+    </tbody>
+</table>
+            </div>
+            </div>
+
+    {% endblock admincontent %}
 
 
-
+{%endblock%}

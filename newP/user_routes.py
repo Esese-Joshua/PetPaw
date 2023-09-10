@@ -9,8 +9,8 @@ from datetime import datetime
 
 
 from newP import app, csrf
-from newP.models import db, Pet_owner, Vet, Pet, Pet_medical_record, Bills, Category, Appointment
-from newP.forms import SignupForm, UserProfileForm, LoginForm, PetProfileForm, EditPetProfileForm, AppointmentForm, BillForm
+from newP.models import db, Pet_owner, Vet, Pet, Bills, Category, Appointment, Treatment, Payment
+from newP.forms import SignupForm, UserProfileForm, LoginForm, EditPetProfileForm, AppointmentForm, BillForm
 
 
 def login_required(f):
@@ -163,12 +163,17 @@ def signout():
     return redirect("/login")
 
 
-# @app.route("/medics", methods = ["POST","GET"])
-# @login_required
-# def medical_records():
-#     useronline = session.get("Pet_medical_record_id")
-#     userdeets = db.session.query(Pet_medical_record).get(useronline)
-#     return render_template("/pet_owner/medics.html", userdeets=userdeets)
+@app.route("/medics", methods = ["POST","GET"])
+@login_required
+def medical_records():
+
+    if session.get("user_loggedin") != None:
+        
+        treatment = db.session.query(Treatment).all()
+        return render_template("pet_owner/medics.html", treatments=treatment) 
+    else:
+        flash("Access Denied", category='danger')
+        return redirect("/dashboard/")  
 
 
 @app.route("/mypets")
@@ -347,19 +352,6 @@ def book_appointment(pet_id):
             return redirect("/mypets")
             
 
-
-# @app.route("/appointments")
-# def view_appointments():
-#     if session.get("user_loggedin") != None:
-#         user_id = session.get("userid")
-
-#         appointment = db.session.query(Appointment).get(user_id)
-#         return render_template("pet_owner/appointments.html", appointments=appointment) 
-#     else:
-#         flash("Access Denied", category='danger')
-#         return redirect("/mypets")  
-
-
 @app.route("/pet_appointments")
 def view_pet_appointments():
     if session.get("user_loggedin") != None:
@@ -425,14 +417,13 @@ def billing(bills_id):
     
 
 
-@app.route("/bills_history")
+@app.route("/bills_history", methods = ["POST", "GET"])
 @login_required
 def view_bills_history():
     
     if session.get("user_loggedin") != None:
     
         bill = db.session.query(Bills).all()
-
         return render_template("pet_owner/bills_history.html", bills=bill) 
     else:
         flash("Access Denied", category='danger')
@@ -469,7 +460,7 @@ def paystack(bills_reference_number):
         if json_response['status'] == True:
             paygateway = json_response['data']['authorization_url']
 
-            session["bills_reference_number"] = bills_reference_number
+            session["bills_id"] = bill.bills_id
 
             return redirect(paygateway)
 
@@ -484,20 +475,20 @@ def paystack(bills_reference_number):
 @app.route("/landing") 
 def paystack_landing():
 
-    bills_reference_number = session.get("bills_reference_number")
+    bills_id = session.get("bills_id")
 
     reference = request.args.get("reference")
 
-# Join the appropriate tables to UPDATE APPOINTMENT STATUS AND BILLING STATUS
-
-    # bills = db.session.query(Bills).filter(Bills.bills_reference_number == bills_reference_number).first()
+    # Join the appropriate tables to UPDATE APPOINTMENT STATUS AND BILLING STATUS
 
     appointment = (
         db.session.query(Appointment)
         .join(Bills, Appointment.appointment_id == Bills.appointment_id)
-        .filter(Bills.bills_reference_number == bills_reference_number).
-        first()
+        .filter(Bills.bills_id == bills_id)
+        .first()
     )
+
+    bill = db.session.query(Bills).get(bills_id)
 
     # connect to paystack
     headers = {"Content-Type":"application/json","Authorization":"Bearer sk_test_f98bb4d17a3dda76e2367174394dd525ff3bb221"}
@@ -509,16 +500,38 @@ def paystack_landing():
 
     if json_response['status'] == True: # payment successful
 
-        
-        appointment.appointment_status = 'Paid'
-        # bills.bills_status = 'Paid'
+        P = Payment(bills_id=bills_id, paystack_ref_no=reference)
 
+        appointment.appointment_status = 'Paid'
+
+        bill.bills_status = "Paid"
+
+        db.session.add(P)
         db.session.commit()
 
         flash("Payment was succesful")
-        return redirect("/pet_appointments")
+        return redirect("/bills_history")
         
     else:
         flash("Payment Failed")
-        return redirect("/pet_appointments")
+        return redirect("/bills_history")
 
+
+
+
+@app.route("/view_payment_details/<int:bills_id>") 
+def view_payment_details(bills_id):
+
+    payment = db.session.query(Payment).filter(Payment.bills_id == bills_id).first()
+
+    # connect to paystack
+    headers = {"Content-Type":"application/json","Authorization":"Bearer sk_test_f98bb4d17a3dda76e2367174394dd525ff3bb221"}
+
+    verifyurl = "https://api.paystack.co/transaction/verify/"+str(payment.paystack_ref_no)
+
+    response = requests.get(verifyurl, headers=headers)
+
+    json_response = json.loads(response.text)
+
+    return render_template("pet_owner/payment_details.html",json_response=json_response)
+    

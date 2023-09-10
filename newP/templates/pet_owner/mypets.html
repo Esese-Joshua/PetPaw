@@ -34,7 +34,7 @@
   <thead>
     <tr>
       <th scope="col">S/N</th>
-      <th scope="col">Pet Name</th>
+      <th scope="col"> Pet Name </th>
       <th scope="col">Category</th>
       <th scope="col">Breed</th>
       <th scope="col">Picture</th>
@@ -49,11 +49,11 @@
     {% for m in pets %}
     <tr>
       <th scope="row"> {{ loop.index}} </th>
-      <td> {{ m.pet_name }} </td>
+      <td> <a href="/pet_details/{{ m.pet_id }}" class="pet_details_link"> {{ m.pet_name }} </a> </td>
       <td> {{ m.catrelate.cat_name }} </td>
       <td> {{ m.pet_breed }} </td>
       
-      <td><img src="{{url_for('static',filename='/collections/'+m.pet_pic) }}" height="100"> </td>
+      <td><img src="{{url_for('static',filename='/collections/'+m.pet_pic) }}" style="height: 52px; width:60px"> </td>
 
       <td> {{ m.pet_status }} </td>
       <td> {{ m.date_created }} </td>
@@ -63,7 +63,6 @@
 
           <a href="/edit_pet/{{ m.pet_id }}" class="btn btn-sm btn-primary">Edit</a> 
 
-          <a href="/pet_details/{{ m.pet_id }}" class="btn btn-sm btn-primary"> View Details </a> 
 
           <a href="/book_appointment/{{ m.pet_id }}" class="btn btn-sm btn-primary">Book Appointment</a>
 

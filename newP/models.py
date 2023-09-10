@@ -21,7 +21,7 @@ class Appointment(db.Model):
     user_id = db.Column(db.Integer,db.ForeignKey('pet_owner.user_id'),nullable=False)
     pet_id = db.Column(db.Integer,db.ForeignKey('pet.pet_id'),nullable=False)
     vet_id = db.Column(db.Integer,db.ForeignKey('vet.vet_id'),nullable=False)
-    appointment_date = db.Column(db.DateTime(), default=datetime.utcnow)
+    appointment_date = db.Column(db.Date())
     pet_current_weight = db.Column(db.Float())
     appointment_comments = db.Column(db.String(200), nullable=True)
     appointment_status = db.Column(db.Enum('Accepted','Rejected','Treated', 'Pending','In-progress','Completed','Billed','Paid'),nullable=False, server_default=("Pending"))
@@ -84,10 +84,8 @@ class Bills(db.Model):
 class Payment(db.Model):
     pay_id = db.Column(db.Integer, autoincrement=True,primary_key=True)
     bills_id = db.Column(db.Integer,db.ForeignKey('bills.bills_id'),nullable=False) 
-    pay_amt = db.Column(db.Float, nullable=False) 
-    pay_refno = db.Column(db.Integer,nullable=False)
-    pay_date = db.Column(db.Date())
-    pay_status =db.Column(db.Enum('Pending','Failed','Paid'),nullable=False, server_default=("Pending"))  
+    paystack_ref_no = db.Column(db.String(50),nullable=False)
+    pay_date = db.Column(db.DateTime(), default=datetime.utcnow)
     
     #set relationship    
     billsrelate = db.relationship('Bills',back_populates='paybills_relate') 
@@ -127,42 +125,3 @@ class Category(db.Model):
 
     #set relationships
     petrelate = db.relationship("Pet", back_populates="catrelate")
-
-    
-class Pet_medical_record(db.Model):
-    Pet_medical_record_id = db.Column(db.Integer, autoincrement=True,primary_key=True)
-    pet_id = db.Column(db.Integer, db.ForeignKey('pet.pet_id'),nullable=False)  
-    pet_current_weight = db.Column(db.Integer())
-    pet_vaccination_status = db.Column(db.String(10),nullable=False)
-    pet_last_visit_date =db.Column(db.DateTime(), default=datetime.utcnow)
-    date = db.Column(db.DateTime(), default=datetime.utcnow) 
-
-
-class Diagnosis(db.Model):
-    pet_diagnosis_id = db.Column(db.Integer, autoincrement=True,primary_key=True)
-    pet_id = db.Column(db.Integer, db.ForeignKey('pet.pet_id'),nullable=False)  
-    disease_name =db.Column(db.String(20),nullable=False)
-
-
-class Pet_breed(db.Model):
-    pet_breed_id = db.Column(db.Integer, autoincrement=True,primary_key=True)
-    pet_id = db.Column(db.Integer, db.ForeignKey('pet.pet_id'),nullable=False)  
-    pet_breed_name = db.Column(db.String(50),nullable=False)
-
-
-class Pet_feeding(db.Model):
-    Pet_feeding_id = db.Column(db.Integer, autoincrement=True,primary_key=True)
-    pet_id = db.Column(db.Integer, db.ForeignKey('pet.pet_id'),nullable=False)  
-    pet_food_type_id = db.Column(db.Integer, db.ForeignKey('food_type.food_type_id'),nullable=False)  
-    pet_feeding_time =db.Column(db.DateTime())
-    pet_feeding_quantity = db.Column(db.Float())
-    pet_feeding_note = db.Column(db.String(100),nullable=False)
-    date = db.Column(db.DateTime(), default=datetime.utcnow)
-
-
-class Food_type(db.Model):
-    food_type_id = db.Column(db.Integer, autoincrement=True,primary_key=True)
-    pet_id = db.Column(db.Integer, db.ForeignKey('pet.pet_id'),nullable=False)  
-    food_discription = db.Column(db.String(100),nullable=False)
-    food_nutritious_value = db.Column(db.String(100),nullable=False)
-

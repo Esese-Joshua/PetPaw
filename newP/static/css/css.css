@@ -66,6 +66,15 @@
 }
 
 
+.pet_details_link{
+	display: flex;
+	font-size: 15px;	
+	color: brown;
+	text-decoration: none;
+    padding: 2px;
+}
+
+
  .pet-profiles{
 	font-size: 15px;	
 	color: brown;

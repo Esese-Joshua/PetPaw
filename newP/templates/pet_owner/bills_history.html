@@ -33,9 +33,10 @@
 
         <th scope="col">S/N</th>
         <th scope="col">Pet Name</th>
-        <th scope="col">Amount (#)</th>
+        <th scope="col">Amount (NGN)</th>
         <th scope="col">Status</th>
         <th scope="col">Deadline</th>
+        <th scope="col">Action</th>
       </tr>
     </thead>
     <tbody>
@@ -47,6 +48,23 @@
         <td> {{ m.bills_amount }} </td>
         <td> {{ m.bills_status }} </td>
         <td> {{ m.bills_deadline }} </td>
+
+        <td>
+
+            {% if m.bills_status == "Paid" %}
+
+            <a href="/view_payment_details/{{ m.bills_id }}" class="btn btn-sm btn-primary"> Payment Details </a> 
+
+            {% endif %}
+
+
+            {% if m.bills_status == 'Pending' %}
+
+            <a href="/bills/{{ m.bills_id }}" class="btn btn-sm btn-success"> Pay Bill </a> 
+        
+            {% endif %}
+
+        </td>
       </tr>
       {% endfor %}
 

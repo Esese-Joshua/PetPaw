@@ -18,17 +18,6 @@ class LoginForm(FlaskForm):
     btn = SubmitField("Login") 
   
 
-class PetProfileForm(FlaskForm):
-    pname = StringField("Pet Name",validators=[DataRequired(message="Your Fullname is required")])
-    ptype = FileField("Display Picture", validators=[FileRequired(), FileAllowed(["jpg", "png"], 'Images Only') ])
-    pgender = StringField("Gender", validators=[DataRequired(message="This field is required is required")]) 
-    pcolor = StringField("Pet Color", validators=[DataRequired(message="This field is required is required")]) 
-    pwieght = StringField("Display Picture", validators=[DataRequired(message="This field is required is required")]) 
-    pdob = StringField("Pet DOB", validators=[DataRequired(message="This field is required is required")]) 
-    pix = FileField("Display Picture", validators=[FileRequired(), FileAllowed(["jpg", "png"], 'Images Only') ])
-    btn = SubmitField("Update Profile")
-
-
 class EditPetProfileForm(FlaskForm):
     pet_name = StringField("Pet Name",validators=[DataRequired(message="Your Fullname is required")])
     #status = StringField("Status",validators=[DataRequired(message="This field is required")])
@@ -81,47 +70,3 @@ class BillForm(FlaskForm):
     ref_number = StringField("Ref Number", validators=[DataRequired(message="This field is required")]) 
     btn = SubmitField("Create Bill")
 
-
-
-
-
-
-
-
-# @app.route("/landing")
-# def paystack_landing():
-#     bills_reference_number = session.get("bills_reference_number")
-#     reference = request.args.get("reference")
-
-#     try:
-#         bills = db.session.query(Bills).get(bills_reference_number)
-#         appointment = (
-#             db.session.query(Appointment)
-#             .join(Bills, Appointment.appointment_id == Bills.appointment_id)
-#             .filter(Bills.bills_reference_number == bills_reference_number)
-#             .first()
-#         )
-
-#         headers = {
-#             "Content-Type": "application/json",
-#             "Authorization": "Bearer sk_test_f98bb4d17a3dda76e2367174394dd525ff3bb221",
-#         }
-
-#         verifyurl = "https://api.paystack.co/transaction/verify/" + str(reference)
-
-#         response = requests.get(verifyurl, headers=headers)
-#         json_response = response.json()
-
-#         if json_response.get('status') == True:  # Use get() for dictionary keys
-#             appointment.appointment_status = 'Completed'
-#             bills.bills_status = 'Paid'
-#             flash("Payment was successful")
-#         else:
-#             flash("Payment Failed")
-
-#         db.session.commit()  # Commit changes to the database
-#         return redirect("/pet_appointments")
-
-#     except Exception as e:
-#         flash(f"An error occurred: {str(e)}")
-#         return redirect("/pet_appointments")

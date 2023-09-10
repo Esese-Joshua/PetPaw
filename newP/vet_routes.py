@@ -238,7 +238,20 @@ def treatment(appointment_id):
         else:
              flash("Opps, something went wrong! Please try again..")
              return redirect("/view_pet_details")
+        
 
+
+@app.route("/view_treatment/<int:treatment_id>", methods=["POST", "GET"])
+@login_required
+def view_treatment(treatment_id):
+    if session.get("vet_loggedin") != None:
+        
+        treatment = db.session.query(Treatment).get(treatment_id)
+        return render_template("vet/view_treatment.html", treatments=[treatment]) 
+    else:
+        flash("Access Denied", category='danger')
+        return redirect("/vet/login")  
+    
 
 
 @app.route("/billing/<int:appointment_id>", methods=["GET","POST"])
@@ -303,22 +316,10 @@ def create_bill(appointment_id):
         
 
 
-@app.route("/view_treatment/<int:treatment_id>", methods=["POST", "GET"])
-@login_required
-def view_treatment(treatment_id):
-    if session.get("vet_loggedin") != None:
-        
-        treatment = db.session.query(Treatment).get(treatment_id)
-        return render_template("vet/view_treatment.html", treatments=[treatment]) 
-    else:
-        flash("Access Denied", category='danger')
-        return redirect("/vet/login")  
-    
-
 @app.route("/view_bill/<int:bills_id>", methods=["POST", "GET"])
 @login_required
 def view_bill(bills_id):
-    
+
     if session.get("vet_loggedin") != None:
         bill = db.session.query(Bills).get(bills_id)
 
