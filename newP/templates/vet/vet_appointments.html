@@ -82,13 +82,6 @@
       {% endif %}
 
 
-      {% if m.appointment_status == 'Completed' %}
-
-      <a href="/billing/{{ m.appointment_id }}" class="btn btn-sm btn-success"> Create Bill </a> 
-
-      {% endif %}
-
-
       {% if m.appointment_status == 'Treated' %}
 
       <a href="/view_treatment/{{ m.appointment_id }}" class="btn btn-sm btn-info"> View Treatment </a> 
@@ -99,6 +92,15 @@
 
 
       {% if m.appointment_status == 'Billed' %}
+
+      <a href="/view_bill/{{ m.appointment_id }}" class="btn btn-sm btn-info"> View Bill </a> 
+
+      {% endif %}
+
+
+      {% if m.appointment_status == 'Completed' %}
+
+      <!-- <a href="/billing/{{ m.appointment_id }}" class="btn btn-sm btn-success"> Create Bill </a>  -->
 
       <a href="/view_bill/{{ m.appointment_id }}" class="btn btn-sm btn-info"> View Bill </a> 
 

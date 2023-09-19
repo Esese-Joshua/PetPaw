@@ -48,7 +48,11 @@
       <td> {{ m.pet_breed }} </td>
       <td> {{ m.pet_gender }} </td>
       
-      <td><img src="{{url_for('static',filename='/collections/'+m.pet_pic) }}" height="100"> </td>
+      <td>
+        <a href="{{url_for('static',filename='/collections/'+m.pet_pic) }}">
+        <img src="{{url_for('static',filename='/collections/'+m.pet_pic) }}" style="height: 70px; width:80px" > 
+        </a>
+      </td>
 
       <td> {{ m.pet_status }} </td>
       <td> {{ m.pet_weight_at_reg }} </td>

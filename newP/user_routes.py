@@ -1,16 +1,48 @@
-import re,random,os, json, requests, sys
+import re, random, os, json, requests, ssl, smtplib
 
 from flask import render_template, request, redirect, flash, make_response, session, url_for
+
+from flask_login import LoginManager
+
 from sqlalchemy.sql import text
 from sqlalchemy.exc import SQLAlchemyError
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
-
 from newP import app, csrf
 from newP.models import db, Pet_owner, Vet, Pet, Bills, Category, Appointment, Treatment, Payment
 from newP.forms import SignupForm, UserProfileForm, LoginForm, EditPetProfileForm, AppointmentForm, BillForm
+
+
+login_manager = LoginManager()
+
+login_manager.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Pet_owner.get(user_id)
+
+
+# email_sender = "petpaw@ng.com"
+# email_password = "1122"
+# email_receiver = " "
+
+# subject = "Appointment reminder"
+# body = """ 
+
+# Dear {{Pet_Owner_Name}},
+
+# Your next appointment for {{pet_name}} with {{doctor_name}} is on {{appointment_date}}.
+
+# Address is {{doctor_address}}
+
+# Best Regards,
+# Pet Care System. 
+
+# """
+
 
 
 def login_required(f):
@@ -214,7 +246,7 @@ def addpet():
     else:
         # Retrieve all the form data
         petcat = request.form.get("petcat")
-        title = request.form.get("title")
+        pet_name = request.form.get("title")
         gender = request.form.get("gender")
         color = request.form.get("color")
         weight = request.form.get("weight")
@@ -227,7 +259,7 @@ def addpet():
         comments = request.form.get("comments")
 
         # validate name and file
-        if title != "" and cover:
+        if pet_name != "" and cover:
             filename = cover.filename
             allowed = [".jpg", ".png", ".jpeg"]
             name,ext = os.path.splitext(filename)
@@ -235,7 +267,7 @@ def addpet():
             
             if ext.lower() in allowed:
                 cover.save("newP/static/collections/" +newname)
-                P = Pet(pet_name=title,pet_descript=descript,pet_pic=newname,pet_gender=gender,pet_color=color,pet_cat_id=petcat,pet_dob=dob,pet_weight_at_reg=weight,user_id=session['userid'],pet_breed=breed,pet_likes=likes,pet_dislikes=dislikes,pet_comments=comments)
+                P = Pet(pet_name=pet_name,pet_descript=descript,pet_pic=newname,pet_gender=gender,pet_color=color,pet_cat_id=petcat,pet_dob=dob,pet_weight_at_reg=weight,user_id=session['userid'],pet_breed=breed,pet_likes=likes,pet_dislikes=dislikes,pet_comments=comments)
 
                 db.session.add(P)
                 db.session.commit()
@@ -268,23 +300,28 @@ def edit_pet_profile(pet_id):
     petdetails = db.session.query(Pet).get(pet_id)
 
     if request.method == "POST": 
-        try:
-            petdetails.pet_name = request.form["pet_name"]
-            petdetails.pet_breed = request.form["breed"]
-            petdetails.pet_descript = request.form["descript"]
-            petdetails.pet_likes = request.form["likes"]
-            petdetails.pet_dislikes = request.form["dislikes"]
-            
-            db.session.commit()
-            flash("Pet Profile Updated!")
-            #return redirect("/pet_details/" +pet_id)
-            return redirect("/mypets")
+        petdetails.pet_name = request.form["pet_name"]
+        petdetails.pet_breed = request.form["breed"]
+        petdetails.pet_descript = request.form["descript"]
+        petdetails.pet_likes = request.form["likes"]
+        cover = request.files.get("pic")
 
-        except:
-            flash("Opps, something went wrong! Please try again..")
-            #return redirect("/pet_details/" +pet_id)
-            return redirect("/mypets")
+        filename = cover.filename
+        allowed = [".jpg", ".png", ".jpeg"]
+        name,ext = os.path.splitext(filename)
+        newname = str(random.random()* 1000000) + ext
         
+        if ext.lower() in allowed:
+            cover.save("newP/static/collections/" +newname)
+            
+            petdetails.pet_pic = newname
+
+        db.session.commit()
+        flash("Pet Profile Updated!")
+        #return redirect("/pet_details/" +pet_id)
+        return redirect("/pet_details/"+ str(pet_id))
+
+  
     else:
         return render_template("pet_owner/petedit.html", pet_form=pet_form, petdetails=petdetails)
 
@@ -430,7 +467,6 @@ def view_bills_history():
         return redirect("/dashboard/")  
 
 
-
 @app.route("/paystack/<string:bills_reference_number>",methods=["POST"])
 @login_required
 def paystack(bills_reference_number):
@@ -480,7 +516,6 @@ def paystack_landing():
     reference = request.args.get("reference")
 
     # Join the appropriate tables to UPDATE APPOINTMENT STATUS AND BILLING STATUS
-
     appointment = (
         db.session.query(Appointment)
         .join(Bills, Appointment.appointment_id == Bills.appointment_id)
@@ -502,7 +537,7 @@ def paystack_landing():
 
         P = Payment(bills_id=bills_id, paystack_ref_no=reference)
 
-        appointment.appointment_status = 'Paid'
+        appointment.appointment_status = 'Completed'
 
         bill.bills_status = "Paid"
 

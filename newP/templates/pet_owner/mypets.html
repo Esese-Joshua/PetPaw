@@ -1,8 +1,4 @@
-{% if user_loggedin %}	
-	{% extends 'pet_owner/logout_layout.html' %}
-{% else %}
-	{% extends "pet_owner/login_layout.html" %}
-{% endif %}
+{% extends "pet_owner/login_layout.html" %}
 
 {% block content %}
 
@@ -56,14 +52,12 @@
       <td><img src="{{url_for('static',filename='/collections/'+m.pet_pic) }}" style="height: 52px; width:60px"> </td>
 
       <td> {{ m.pet_status }} </td>
-      <td> {{ m.date_created }} </td>
+      <td> {{ m.date_time_created }} </td>
 
       <td>       
-          <a href="" class="btn btn-sm btn-success disabled"> {{m.pet_gender}}</a>
+          <a href="" class="btn btn-sm btn-primary disabled"> {{m.pet_gender}}</a>
 
-          <a href="/edit_pet/{{ m.pet_id }}" class="btn btn-sm btn-primary">Edit</a> 
-
-
+         
           <a href="/book_appointment/{{ m.pet_id }}" class="btn btn-sm btn-primary">Book Appointment</a>
 
           <!-- show modal -->

@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 01cae9d70439
+Revision ID: bfe84dac2923
 Revises: 
-Create Date: 2023-09-09 21:44:23.575596
+Create Date: 2023-09-17 10:48:22.735774
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '01cae9d70439'
+revision = 'bfe84dac2923'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -59,9 +59,6 @@ def upgrade():
     sa.Column('last_updated', sa.DateTime(), nullable=True),
     sa.Column('pet_weight_at_reg', sa.Float(), nullable=True),
     sa.Column('pet_dob', sa.Date(), nullable=True),
-    sa.Column('pet_likes', sa.String(length=100), nullable=True),
-    sa.Column('pet_dislikes', sa.String(length=100), nullable=True),
-    sa.Column('pet_comments', sa.String(length=200), nullable=True),
     sa.ForeignKeyConstraint(['pet_cat_id'], ['category.cat_id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['pet_owner.user_id'], ),
     sa.PrimaryKeyConstraint('pet_id')
@@ -74,7 +71,7 @@ def upgrade():
     sa.Column('appointment_date', sa.Date(), nullable=True),
     sa.Column('pet_current_weight', sa.Float(), nullable=True),
     sa.Column('appointment_comments', sa.String(length=200), nullable=True),
-    sa.Column('appointment_status', sa.Enum('Accepted', 'Rejected', 'Treated', 'Pending', 'In-progress', 'Completed', 'Billed', 'Paid'), server_default='Pending', nullable=False),
+    sa.Column('appointment_status', sa.Enum('Accepted', 'Rejected', 'Treated', 'Pending', 'In-progress', 'Completed', 'Billed'), server_default='Pending', nullable=False),
     sa.ForeignKeyConstraint(['pet_id'], ['pet.pet_id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['pet_owner.user_id'], ),
     sa.ForeignKeyConstraint(['vet_id'], ['vet.vet_id'], ),
@@ -103,10 +100,8 @@ def upgrade():
     op.create_table('payment',
     sa.Column('pay_id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('bills_id', sa.Integer(), nullable=False),
-    sa.Column('pay_amt', sa.Float(), nullable=False),
-    sa.Column('pay_refno', sa.Integer(), nullable=False),
-    sa.Column('pay_date', sa.Date(), nullable=True),
-    sa.Column('pay_status', sa.Enum('Pending', 'Failed', 'Paid'), server_default='Pending', nullable=False),
+    sa.Column('paystack_ref_no', sa.String(length=50), nullable=False),
+    sa.Column('pay_date', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['bills_id'], ['bills.bills_id'], ),
     sa.PrimaryKeyConstraint('pay_id')
     )

@@ -58,9 +58,9 @@ class AppointmentForm(FlaskForm):
 
 class TreatmentForm(FlaskForm):
     currentWeight = StringField("Pet Current Weight", validators=[DataRequired(message="This field is required")]) 
-    symptoms = StringField("Symptoms", validators=[DataRequired(message="This field is required")]) 
-    prescription = StringField("Prescription", validators=[DataRequired(message="This field is required")]) 
-    remark = StringField("Remark", validators=[DataRequired(message="This field is required")]) 
+    symptoms = TextAreaField("Symptoms", validators=[DataRequired(message="This field is required")]) 
+    prescription = TextAreaField("Prescription", validators=[DataRequired(message="This field is required")]) 
+    remark = TextAreaField("Remark", validators=[DataRequired(message="This field is required")]) 
     btn = SubmitField("Submit")
 
 

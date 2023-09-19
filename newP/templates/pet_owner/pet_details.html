@@ -2,82 +2,108 @@
 
 {% block content %}
 
+	{% block breadcrumbs %}
+	<ol class="breadcrumb mb-4">
+		<li class="breadcrumb-item"><a href="/dashboard/"> Dashboard </a></li>
+		<li class="breadcrumb-item active"> Pet Details </li>
+	</ol>
+	{% endblock breadcrumbs %}
+
 	{% block detailscontent %}
 
 		{% set message = get_flashed_messages() %}
 		{% for t in message %}
-		<p class="alert alert-info"> {{ t }} </p>
+		<p class="alert alert-success"> {{ t }} </p>
 		{% endfor %}
-	
-		<div class="row" style="margin-top: 3%">
+
+
+		<div class="row" style="margin-top: 2%">
+
 			<div class="col-md-1"> </div>
+
+			{% block detailscontents %}
 				
 				<div class="col-md-2 d-grid gap-2">
-
 					<button type="button" class="btn btn-outline-dark"> <a href="/mypets"> MY PETS </a> </button>
+
+					{% for pet in pets %}
+
+					<button type="button" class="btn btn-outline-dark"> <a href="/edit_pet/{{pet. pet_id }}"> EDIT PET PROFILE </a> </button>
+
+					{% endfor %}
 					
 					<button type="button" class="btn btn-outline-dark"> <a href="/medics"> MEDICAL RECORDS </a> </button>
 
-					<button type="button" class="btn btn-outline-dark"> <a href="/profile"> USER PROFILE </a> </button>
-
 					<button type="button" class="btn btn-outline-dark"> <a href="/pet_appointments"> APPOINTMENTS </a> </button>
-
-                    
-
 				</div>
-		
-				<div class="col-md-4 footer"> 
-					<h3> Pet Details </h3>
 
+				{% endblock detailscontents %}
+						
+				<div class="col-md-2 footer"> 
+					
 					{% for pet in pets %}
 						<div> 
-							<p> Pet Name: {{ pet.pet_name }} </p> 
+							<p> Pet Name: </p> 
 						
-							<p> Pet Category: {{ pet.catrelate.cat_name }} </p>
+							<p> Pet Category: </p>
 						
-							<p> Pet Breed: {{ pet.pet_breed }} </p>
+							<p> Pet Breed: </p>
 					
-							<p> Gender: {{ pet.pet_gender }} </p>
+							<p> Gender: </p>
 						
-							<p>Pet Status: {{ pet.pet_status }} </p>
+							<p>Pet Status: </p>
 						
-							<p> Weight at Registration: {{ pet.pet_weight_at_reg }} </p>
+							<p> Weight at Registration: </p>
 
 						</div>
-					{% endfor %}
 
 				</div>
+						<div class="col-md-2 footer"> 
 
+							<p> {{ pet.pet_name }} </p> 
+						
+							<p> {{ pet.catrelate.cat_name }} </p>
+						
+							<p> {{ pet.pet_breed }} </p>
+					
+							<p> {{ pet.pet_gender }} </p>
+						
+							<p> {{ pet.pet_status }} </p>
+						
+							<p> {{ pet.pet_weight_at_reg }} </p>
+
+						</div>
+		
                 <div class="col-md-4 footer"> 
                     
-                    <p> Pet picture </p>
+                    <img src="{{url_for('static',filename='/collections/'+pet.pet_pic) }}" style="height: 345px; width:600px">
                            
                 </div>
-                
-                <div class="row" style="margin-top: 3%; background-color: #FAF9F6;">
-                <div class="col-md-4"> 
-                    
-				{% for pet in pets %}
-                <h3> About Your Pet: </h3> 
-                <p> {{ pet.pet_descript}} </p> 
+				{% endfor %}
 
+
+        <div class="row" style="margin-top: 4%; background-color: #FAF9F6;">
+
+                <div class="col-md-4"> 
+					{% for pet in pets %}
+					<h3> About Your Pet: </h3> 
+					<p> {{ pet.pet_descript}} </p> 
                 </div>
 
 			   <br><br>
 
 
             <div class="col-md-4"> 
-            <h3> Likes: </h3>
-             <p> {{ pet.pet_likes }}</p>
+				<h3> Likes: </h3>
+				<p> {{ pet.pet_likes }}</p>
             </div>
 
             <div class="col-md-4"> 
-			<h3>  Dislikes: </h3> 
-			<p> {{ pet.pet_dislikes }} </p>
-					
+				<h3>  Dislikes: </h3> 
+				<p> {{ pet.pet_dislikes }} </p>
              </div>
 
-				</div>
+		</div>
 
 				{% endfor %}
 		</div>

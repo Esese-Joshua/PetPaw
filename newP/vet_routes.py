@@ -1,4 +1,4 @@
-import re, random, os, json, random
+import re, random, os, json, random, time, ssl, smtplib
 from flask import render_template, request,redirect, flash, make_response, session, url_for
 from sqlalchemy.sql import text
 from sqlalchemy.orm import joinedload
@@ -7,12 +7,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from functools import wraps
 
-
-
+from email.message import EmailMessage
 
 from newP import app, csrf
-from newP.models import db, Pet_owner, Treatment, Vet, Pet, Category, Appointment, Bills
+from newP.email_sender import send_email
+from newP.models import db, Pet_owner, Treatment, Vet, Pet, Category, Appointment, Bills, Pet_owner
 from newP.forms import SignupForm, LoginForm, VetProfileForm, TreatmentForm, BillForm
+
 
 
 def login_required(f):
@@ -68,8 +69,8 @@ def vet_login():
     if request.method =="GET":
         return render_template("vet/login.html", loginform=loginform)
     else:
-        email= request.form.get('email')
-        pwd=request.form.get('password')
+        email = request.form.get('email')
+        pwd = request.form.get('password')
         vet_data = db.session.query(Vet).filter(Vet.vet_email==email).first()
 
         if vet_data:
@@ -94,6 +95,15 @@ def vet_logout():
         session.pop("vet_loggedin",None)
         flash("You have logged out successfully")
     return redirect("/pet_owner/signup")
+
+
+def check_activity():
+    last_activity = session.get('vet_loggedin')
+    current_time = time.time()
+    if current_time - last_activity > 300:  # 300 seconds = 5 minutes
+        session.pop()  # Log out the user by clearing the session
+        flash("Session Has Expired, Please Login")
+        return ("/vet/login")
 
 
 @app.route("/edit_vet_profile", methods = ["POST","GET"])
@@ -160,13 +170,58 @@ def view_vet_appointments():
         return redirect("/vet/dashboard")  
 
 
+# @app.route("/accept_appointment/<int:appointment_id>")
+# @ login_required
+# def accept_appointment(appointment_id):
+#     user_id = session.get("userid")
+#     appointment = Appointment.query.get_or_404(appointment_id)
+
+#     appointment.appointment_status = 'Accepted'
+
+#     db.session.commit()
+
+#     pet_owner = db.session.query(Pet_owner).get(user_id)
+
+#     send_email(pet_owner.user_email, "Appointment Accepted", " Your appointment for {{appointment_pet_owner_relate.pet_appointment_relate.pet_name}} with {{doctor_name}} is on is Accepted. {{appointment_date}}. Address is {{appointment.appointment_date}} Best Regards, Pet Care System. ")
+
+#     return redirect("/vet_appointments")
+
+
 @app.route("/accept_appointment/<int:appointment_id>")
+@login_required
 def accept_appointment(appointment_id):
     appointment = Appointment.query.get_or_404(appointment_id)
 
-    appointment.appointment_status = 'Accepted'
+    if appointment.appointment_status == 'Accepted':
+        flash("This appointment has already been accepted.", "info")
+    else:
 
-    db.session.commit()
+        appointment.appointment_status = 'Accepted'
+        db.session.commit()
+
+        pet_owner = Pet_owner.query.get(appointment.user_id)
+
+        email_body = f""" 
+        
+Hello {pet_owner.user_fullname},
+
+Your appointment for {appointment.pet_appointment_relate.pet_name} with Dr {appointment.vet_appointment_relate.vet_fullname} is accepted. Meeting is scheduled to hold on {appointment.appointment_date}.
+Visit our website for more info.
+
+Best Regards, 
+
+PetPaw.
+        
+        """
+
+        # Assuming you have a send_email function that sends emails
+        send_email(pet_owner.user_email, "Appointment Accepted", email_body)
+
+        # To manually input email reciever
+        # send_email("greatestodose@gmail.com", "Appointment Accepted", email_body)
+
+        flash("Appointment accepted successfully!", "success")
+
     return redirect("/vet_appointments")
 
 
@@ -177,6 +232,29 @@ def reject_appointment(appointment_id):
     appointment.appointment_status = 'Rejected'
     
     db.session.commit()
+
+    pet_owner = Pet_owner.query.get(appointment.user_id)
+
+    email_body = f""" 
+
+Hello {pet_owner.user_fullname},
+
+Your appointment for {appointment.pet_appointment_relate.pet_name} with Dr {appointment.vet_appointment_relate.vet_fullname} was rejected. Please reschedule for a fresh appointment.
+Visit our website for more info.
+
+Best Regards, 
+
+PetPaw.
+    
+    """
+
+    # Assuming you have a send_email function that sends emails
+    send_email(pet_owner.user_email, "Appointment Rejected", email_body)
+
+    # To manually input email reciever
+    # send_email("greatestodose@gmail.com", "Appointment Rejected", email_body)
+
+    flash("Appointment Rejected!", category = 'danger')
     return redirect("/vet_appointments")
 
 
@@ -222,7 +300,6 @@ def treatment(appointment_id):
         remark = request.form.get("remark")
 
         #validatioins / insert
-
         if Treatment:
             T = Treatment(pet_current_weight=currentWeight,symptoms=symptoms,vet_remark=remark,prescription=prescription,appointment_id=appointment_id)
 
@@ -241,11 +318,10 @@ def treatment(appointment_id):
         
 
 
-@app.route("/view_treatment/<int:treatment_id>", methods=["POST", "GET"])
+@app.route("/view_treatment/<int:treatment_id>")
 @login_required
 def view_treatment(treatment_id):
     if session.get("vet_loggedin") != None:
-        
         treatment = db.session.query(Treatment).get(treatment_id)
         return render_template("vet/view_treatment.html", treatments=[treatment]) 
     else:

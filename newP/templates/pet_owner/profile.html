@@ -6,10 +6,13 @@
 
 		{% set message = get_flashed_messages() %}
 		{% for t in message %}
-		<p class="alert alert-info"> {{ t }} </p>
+		<p class="alert alert-success"> {{ t }} </p>
 		{% endfor %}
+
+		<h3 style="margin-top: 2%;"> User Profile </h3>
 	
-		<div class="row" style="margin-top: 3%">
+		<div class="row" style="margin-top: 1%">
+
 			<div class="col-md-1"> </div>
 				
 				<div class="col-md-2 d-grid gap-2">
@@ -18,35 +21,47 @@
 
 					<button type="button" class="btn btn-outline-dark"> <a href="/mypets"> MY PETS </a> </button>
 					
-					<button type="button" class="btn btn-outline-dark"> <a href="/bills_history"> BILLS HISTORY </a> </button>
-
                     <button type="button" class="btn btn-outline-dark"> <a href="/pet_appointments"> APPOINTMENTS </a> </button>
 
 				</div>
 		
-				<div class="col-md-4 footer">
-                     
-					<h3> User Profile </h3>
-
+				<div class="col-md-2 footer">
+    
 					{% for user in users %}
 
 					<div> 
-						<p> Full Name: {{ user.user_fullname }} </p> 
+						<p> Full Name: </p> 
 						
-						<p> Email: {{ user.user_email }} </p>
+						<p> Email: </p>
 
-						<p> Address: {{ user.user_address }} </p>
+						<p> Address: </p>
 																
-						<p> Bio: {{ user.user_bio }} </p>
+						<p> Bio: </p>
 
 					</div>
 
-					{% endfor %}
-
 				</div>
+
+					<div class="col-md-2 footer"> 
+						<p> {{ user.user_fullname }} </p> 
+						
+						<p> {{ user.user_email }} </p>
+
+						<p> {{ user.user_address }} </p>
+																
+						<p> {{ user.user_bio }} </p>
+
+					</div>
+
+				{% endfor %}
 
 		</div>
 
+		<!-- static pic function -->
+		<div class="row">
+			<div class="col background-pic">
+				</div>
+		 </div>
 		
 		<!-- tetiarry navigators -->
 			<div class="row" style="margin-top: 3%"> 

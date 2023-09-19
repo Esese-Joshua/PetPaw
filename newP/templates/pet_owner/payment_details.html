@@ -2,14 +2,23 @@
 
 {% block content %}
 
+	{% block breadcrumbs %}
+		<ol class="breadcrumb mb-4">
+			<li class="breadcrumb-item"><a href="/dashboard/"> Dashboard </a></li>
+			<li class="breadcrumb-item active"> Payment Details </li>
+		</ol>
+		{% endblock breadcrumbs %}
+
 	{% block detailscontent %}
 
 		{% set message = get_flashed_messages() %}
 		{% for t in message %}
 		<p class="alert alert-info"> {{ t }} </p>
 		{% endfor %}
+
 	
-		<div class="row" style="margin-top: 3%">
+	<div class="row" style="margin-top: 2%">
+
 			<div class="col-md-1"> </div>
 				
 				<div class="col-md-2 d-grid gap-2">
@@ -18,31 +27,41 @@
 					
 					<button type="button" class="btn btn-outline-dark"> <a href="/medics"> MEDICAL RECORDS </a> </button>
 
-					<button type="button" class="btn btn-outline-dark"> <a href="/bills_history"> BILLS HISTORY </a> </button>
-
-					<button type="button" class="btn btn-outline-dark"> <a href="/profile"> USER PROFILE </a> </button>
-                    
+					<button type="button" class="btn btn-outline-dark"> <a href="/bills_history"> BILLS HISTORY </a> </button>                
 
 				</div>
 		
-				<div class="col-md-4 footer"> 
-					<h3> Payment Details </h3>
+		<div class="col-md-2 footer"> 
+					
+            <div> 
 
-
-                <div> 
-                <p> Amount: {{ json_response.data.amount/100 }}
-                    {{ json_response.data.currency }} </p> 
-                <p> Status: {{ json_response.data.status }} </p> 
-                <p> Transaction Ref: {{ json_response.data.reference }} </p> 
-                <p> Card Number: {{ json_response.data.authorization.bin }} 
-                    XXXXXX
-                    {{ json_response.data.authorization.last4}}
-                </p> 
+                <p> Amount:  </p> 
+                <p> Status:  </p> 
+                <p> Transaction Ref: </p> 
+                <p> Card Number:  </p> 
                 
-                </div>
-				</div>              
+            </div>
+		</div>              
+
+		<div class="col-md-2 footer"> 
+					
+			<div> 
+			<p> {{ json_response.data.amount/100 }}
+				{{ json_response.data.currency }} </p> 
+
+			<p> {{ json_response.data.status }} </p> 
+
+			<p> {{ json_response.data.reference }} </p> 
+
+			<p> {{ json_response.data.authorization.bin }} 
+				XXXXXX
+				{{ json_response.data.authorization.last4}}
+			</p> 
+			
+			</div>
+		</div>  
                
-		</div>
+	</div>
 
 		<!-- static pic function -->
 			<div class="row">
@@ -61,7 +80,7 @@
 								
 									<li> <a href ="reports.html"> Reports & Analytics </a> </li>
 						</ul>
-					</div>
+					</div>3
 
 			</div>
 

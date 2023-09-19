@@ -24,8 +24,7 @@ class Appointment(db.Model):
     appointment_date = db.Column(db.Date())
     pet_current_weight = db.Column(db.Float())
     appointment_comments = db.Column(db.String(200), nullable=True)
-    appointment_status = db.Column(db.Enum('Accepted','Rejected','Treated', 'Pending','In-progress','Completed','Billed','Paid'),nullable=False, server_default=("Pending"))
-
+    appointment_status = db.Column(db.Enum('Accepted','Rejected','Treated', 'Pending','In-progress','Completed','Billed'),nullable=False, server_default=("Pending"))
 
     #set relationship
     vet_appointment_relate = db.relationship('Vet', back_populates='appointment_vet_relate')
@@ -106,17 +105,15 @@ class Pet(db.Model):
     last_updated = db.Column(db.DateTime(), default=datetime.utcnow)
     pet_weight_at_reg = db.Column(db.Float())
     pet_dob = db.Column(db.Date())
-    pet_likes = db.Column(db.String(100),nullable=True)
-    pet_dislikes = db.Column(db.String(100),nullable=True)
-    pet_comments = db.Column(db.String(200),nullable=True)
+    pet_likes = db.Column(db.String(200),nullable=True)
+    pet_dislikes = db.Column(db.String(200),nullable=True)
+    pet_comments =  db.Column(db.String(200),nullable=True)
 
 
     #set relationships 
     catrelate = db.relationship("Category", back_populates="petrelate")
 
     appointment_pet_relate = db.relationship('Appointment', back_populates='pet_appointment_relate')
-
-    # treatment_pet_relate = db.relationship('Treatment', back_populates='pet_treatment_relate')
 
 
 class Category(db.Model):
